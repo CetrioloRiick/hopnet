@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Config files
+.vscode
+.clangd
+
+# Images
+*.jpg
+*.jpeg
+*.png
