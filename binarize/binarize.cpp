@@ -1,3 +1,5 @@
+#include "binarize.hpp"
+#include "input.hpp"
 #include "opencv2/core/mat.hpp"
 #include <cxxopts.hpp>
 #include <opencv2/opencv.hpp>
@@ -10,7 +12,7 @@
 #include <vector>
 
 namespace fs = std::filesystem;
-
+namespace hpn {
 cv::Mat scaleImage(const std::string& path)
 {
   cv::Mat image = cv::imread(path, cv::IMREAD_GRAYSCALE);
@@ -25,30 +27,34 @@ cv::Mat scaleImage(const std::string& path)
   // cv::imwrite("output/scaled" + entry.path(), resized);
   return resized;
 }
+BinarizeOptions::BinarizeOptions(std::filesystem::path inputFolder, int width,
+                                 int height, int threshold)
+    : inputFolder(inputFolder)
+    , width(width)
+    , height(height)
+    , threshold(threshold)
+{
+  if (!fs::exists(inputFolder) || !fs::is_directory(inputFolder)) {
+    throw std::invalid_argument("inputFolder not valid");
+  }
+  if (width < 1) {
+    throw std::invalid_argument("width must be greater than 1");
+  }if (height < 1) {
+    throw std::invalid_argument("height must be greater than 1");
+  }if(threshold<0 || threshold>255){
+    throw std::invalid_argument("threshold must be between 0 and 255");
+  }
+}
 
 int main(int argc, char* argv[])
 {
   try {
     // INIZIO INPUT
-    cxxopts::Options options(
-        "binarize", "Convert all images in a folder to binary format (-1, +1)");
+    BinarizeOptions opt{getOpt(argc, argv)};
 
-    options.add_options()("i,input", "Input folder path",
-                          cxxopts::value<std::string>())(
-        "t,threshold", "Threshold for binarization",
-        cxxopts::value<int>()->default_value("127"))("h,help", "Print help");
+    int threshold;
 
-    auto result = options.parse(argc, argv);
-
-    if (result.count("help") || !result.count("input")) {
-      std::cout << options.help() << std::endl;
-      return 0;
-    }
-
-    fs::path inputFolder = result["input"].as<std::string>();
-    int threshold        = result["threshold"].as<int>();
-
-    if (!fs::exists(inputFolder) || !fs::is_directory(inputFolder)) {
+    if (!fs::exists(opt.inputFolder) || !fs::is_directory(opt.inputFolder)) {
       std::cerr << "Error: invalid input folder path.\n";
       return 1;
     }
@@ -57,11 +63,11 @@ int main(int argc, char* argv[])
     //
     // FINE INPUT
 
-    std::cout << inputFolder.parent_path() << '\n';
+    std::cout << opt.inputFolder.parent_path() << '\n';
 
-    std::ofstream fout(inputFolder.parent_path() / "binarized-images.txt");
+    std::ofstream fout(opt.inputFolder.parent_path() / "binarized-images.txt");
 
-    for (const auto& entry : fs::directory_iterator(inputFolder)) {
+    for (const auto& entry : fs::directory_iterator(opt.inputFolder)) {
       if (entry.is_regular_file()) {
         std::string stem = entry.path().stem().string();
 
@@ -94,3 +100,4 @@ int main(int argc, char* argv[])
   }
   return 0;
 }
+} // namespace hpn
