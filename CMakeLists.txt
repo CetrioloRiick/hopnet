@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(progettopf VERSION 0.1.0)
+project(hopnet VERSION 0.1.0)
 
 # abilita il supporto per i test, tra cui l'opzione BUILD_TESTING usata sotto
 include(CTest)
@@ -8,7 +8,7 @@ include(CTest)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # richiedi l'uso di C++20 (volendo anche C++23), senza estensioni non-standard offerte dal compilatore usato
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -33,23 +33,35 @@ endif()
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined")
 
 # se usato, richiedi il componente graphics della libreria SFML (versione 2.6 in Ubuntu 24.04)
-find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
+find_package(OpenCV REQUIRED)
+
+# Lo tolgo se non ci saranno common
+include_directories(${CMAKE_SOURCE_DIR}/common)
 
 # dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
-add_executable(progetto main.cpp file1.cpp file2.cpp)
+# Executable: binarize
+add_executable(binarize
+  binarize/binarize.cpp
+  binarize/input.cpp
+)
+
+add_compile_options(-Wno-deprecated-enum-enum-conversion)
+
+
 # nel caso si usi SFML. analogamente per eventuali altre librerie
-target_link_libraries(progetto PRIVATE sfml-graphics)
+target_include_directories(binarize PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(binarize PRIVATE ${OpenCV_LIBS})
 
 # aggiungere eventuali altri eseguibili
 
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
-if (BUILD_TESTING)
+#if (BUILD_TESTING)
 
   # aggiungi l'eseguibile progetto.t
-  add_executable(progetto.t file.t.cpp)
+ # add_executable(progetto.t file.t.cpp)
   # aggiungi l'eseguibile progetto.t alla lista dei test
-  add_test(NAME progetto.t COMMAND progetto.t)
+ # add_test(NAME progetto.t COMMAND progetto.t)
 
-endif()
+#endif()

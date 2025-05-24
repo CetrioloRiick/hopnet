@@ -39,3 +39,7 @@
 *.jpg
 *.jpeg
 *.png
+
+# Compile shit
+build
+.cache

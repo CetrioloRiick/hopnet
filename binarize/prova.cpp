@@ -1,55 +1,41 @@
-#include <opencv2/opencv.hpp>
-#include <filesystem>
-#include <fstream>
+#include <algorithm>
+#include <functional>
 #include <iostream>
-
-namespace fs = std::filesystem;
-
-int main(int argc, char* argv[])
+#include <iterator>
+#include <numeric>
+#include <vector>
+ 
+namespace ranges = std::ranges;
+ 
+constexpr bool some_of(auto&& r, auto&& pred) // some but not all
 {
-  if (argc < 2) {
-    std::cerr << "Usage: " << argv[0] << " <input_folder>\n";
-    return 1;
-  }
-
-  fs::path inputFolder = argv[1];
-  if (!fs::exists(inputFolder) || !fs::is_directory(inputFolder)) {
-    std::cerr << "Error: invalid folder path.\n";
-    return 1;
-  }
-
-  const int threshold = 127; // soglia per binarizzazione
-
-  std::cout << inputFolder << "\n";
-  std::cout << inputFolder.parent_path() << "\n";
-  for (const auto& entry : fs::directory_iterator(inputFolder)) {
-    if (!entry.is_regular_file())
-      continue;
-
-    std::string filename = entry.path().filename().string();
-    std::string stem     = entry.path().stem().string();
-
-    cv::Mat img = cv::imread(entry.path().string(), cv::IMREAD_GRAYSCALE);
-    if (img.empty()) {
-      std::cerr << "Warning: could not read " << filename << "\n";
-      continue;
-    }
-
-    fs::path outputFolder = inputFolder.parent_path() / "poppo";
-
-    std::ofstream fout(outputFolder / (stem + ".txt"));
-
-    img = img > threshold; // binarizzazione
-
-    for (int i = 0; i < img.rows; ++i) {
-      for (int j = 0; j < img.cols; ++j) {
-        int val = img.at<uchar>(i, j);
-        fout << (val ? +1 : -1) << " ";
-      }
-    }
-    fout << "\n";
-    std::cout << "Processed: " << filename << "\n";
-  }
-
-  return 0;
+    return not (ranges::all_of(r, pred) or ranges::none_of(r, pred));
+}
+ 
+constexpr auto w = {1, 2, 3};
+static_assert(!some_of(w, [](int x) { return x < 1; }));
+static_assert( some_of(w, [](int x) { return x < 2; }));
+static_assert(!some_of(w, [](int x) { return x < 4; }));
+ 
+int main()
+{
+    std::vector<int> v(10, 2);
+    std::partial_sum(v.cbegin(), v.cend(), v.begin());
+    std::cout << "Among the numbers: ";
+    ranges::copy(v, std::ostream_iterator<int>(std::cout, " "));
+    std::cout << '\n';
+ 
+    if (ranges::all_of(v.cbegin(), v.cend(), [](int i) { return i % 2 == 0; }))
+        std::cout << "All numbers are even\n";
+ 
+    if (ranges::none_of(v, std::bind(std::modulus<int>(), std::placeholders::_1, 2)))
+        std::cout << "None of them are odd\n";
+ 
+    auto DivisibleBy = [](int d)
+    {
+        return [d](int m) { return m % d == 0; };
+    };
+ 
+    if (ranges::any_of(v, DivisibleBy(7)))
+        std::cout << "At least one number is divisible by 7\n";
 }
