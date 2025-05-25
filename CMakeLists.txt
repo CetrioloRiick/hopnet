@@ -40,20 +40,28 @@ include_directories(${CMAKE_SOURCE_DIR}/common)
 
 # dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
-# Executable: binarize
-add_executable(binarize
+# Executable: binarize.out
+add_executable(binarize.out
   binarize/binarize.cpp
-  binarize/input.cpp
+  common/input.cpp
 )
 
-add_compile_options(-Wno-deprecated-enum-enum-conversion)
+#add_compile_options(-Wno-deprecated-enum-enum-conversion)
 
 
 # nel caso si usi SFML. analogamente per eventuali altre librerie
-target_include_directories(binarize PRIVATE ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(binarize PRIVATE ${OpenCV_LIBS})
+target_include_directories(binarize.out PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(binarize.out PRIVATE ${OpenCV_LIBS})
 
-# aggiungere eventuali altri eseguibili
+# Executable: train.out
+add_executable(train.out
+  train/main.cpp
+  train/train.cpp
+  common/input.cpp
+)
+target_include_directories(train.out PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(train.out PRIVATE ${OpenCV_LIBS})
+
 
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione

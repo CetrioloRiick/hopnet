@@ -1,0 +1,70 @@
+cmake_minimum_required(VERSION 3.28)
+project(hopnet VERSION 0.1.0)
+
+# Export compilation database (for clangd, etc.)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# C++20, no compiler-specific extensions
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Compiler warnings (safe, readable code)
+string(APPEND CMAKE_CXX_FLAGS
+       " -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion"
+       " -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast"
+       " -fno-omit-frame-pointer")
+
+# Standard library assertions
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  string(APPEND CMAKE_CXX_FLAGS " -D_GLIBCXX_ASSERTIONS")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  string(APPEND CMAKE_CXX_FLAGS " -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE")
+endif()
+
+# Address sanitizer and undefined-behavior sanitizer in Debug mode
+string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address,undefined")
+string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined")
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  string(APPEND CMAKE_CXX_FLAGS " -D_GLIBCXX_SANITIZE_STD_ALLOCATOR")
+endif()
+
+# Dependencies
+find_package(OpenCV REQUIRED)
+
+# Include paths for internal headers
+include_directories(${CMAKE_SOURCE_DIR}/common)
+
+# Executable: binarize
+add_executable(binarize
+  binarize/binarize.cpp
+  binarize/input.cpp
+  common/utils.cpp
+)
+target_include_directories(binarize PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(binarize PRIVATE ${OpenCV_LIBS})
+
+# Executable: train
+add_executable(train
+  train/train.cpp
+  common/utils.cpp
+)
+target_include_directories(train PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(train PRIVATE ${OpenCV_LIBS})
+
+# Executable: recall
+add_executable(recall
+  recall/recall.cpp
+  common/utils.cpp
+)
+target_include_directories(recall PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(recall PRIVATE ${OpenCV_LIBS})
+
+# Optional: tests
+include(CTest)
+if (BUILD_TESTING)
+  # Example test executable (adjust as needed)
+  add_executable(hopnet.t tests/hopnet_test.cpp)
+  target_link_libraries(hopnet.t PRIVATE ${OpenCV_LIBS})
+  add_test(NAME hopnet.t COMMAND hopnet.t)
+endif()

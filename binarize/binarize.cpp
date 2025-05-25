@@ -1,5 +1,5 @@
 #include "binarize.hpp"
-#include "input.hpp"
+#include "../common/input.hpp"
 #include "opencv2/core/mat.hpp"
 #include <cxxopts.hpp>
 #include <opencv2/opencv.hpp>
@@ -26,30 +26,11 @@ cv::Mat scaleImage(const std::string& path)
   // cv::imwrite("output/scaled" + entry.path(), resized);
   return resized;
 }
-BinarizeOptions::BinarizeOptions(std::filesystem::path inp, int w, int h, int t)
-    : inputFolder(inp)
-    , width(w)
-    , height(h)
-    , threshold(t)
-{
-  if (!fs::exists(inputFolder) || !fs::is_directory(inputFolder)) {
-    throw std::invalid_argument("inputFolder not valid");
-  }
-  if (width < 1) {
-    throw std::invalid_argument("width must be greater than 1");
-  }
-  if (height < 1) {
-    throw std::invalid_argument("height must be greater than 1");
-  }
-  if (threshold < 0 || threshold > 255) {
-    throw std::invalid_argument("threshold must be between 0 and 255");
-  }
-}
 } // namespace hpn
 int main(int argc, char* argv[])
 {
   try {
-    hpn::BinarizeOptions opt{hpn::getOpt(argc, argv)};
+    hpn::BinarizeOptions opt{hpn::getBinOpt(argc, argv)};
 
     std::ofstream fout(opt.inputFolder.parent_path() / "binarized-images.txt");
     std::array<std::string, 7> acceptedExt = {".png",  ".jpg", ".jpeg", ".bmp",
