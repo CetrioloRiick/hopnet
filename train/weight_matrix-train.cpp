@@ -2,13 +2,14 @@
 #include "weight_matrix.hpp"
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <fstream>
 
 namespace hpn {
 void WeightMatrix::hebbRule(const Pattern& image)
 {
-  int indexI{0};
-  int indexJ{1};
+  size_t indexI{0};
+  size_t indexJ{1};
   // Indici della matrice
   std::for_each_n(weights_.begin(), effectiveEl_, [&](float& pippo) {
     assert(indexI < indexJ);

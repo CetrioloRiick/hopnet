@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <filesystem>
 #include <vector>
 
@@ -8,8 +9,9 @@ class WeightMatrix
 {
  public:
   // Common functions
-  WeightMatrix(int N);
+  WeightMatrix(size_t N);
   std::vector<float> getWeights() const;
+  float operator[](size_t i, size_t j);
 
   // Train functions
   void hebbRule(const Pattern& image);
@@ -17,10 +19,11 @@ class WeightMatrix
   void save(const std::filesystem::path& file) const;
 
   // Recall functions
+  std::vector<float> operator*(const std::vector<float>& vec);
 
  private:
-  int N_;
-  int effectiveEl_;
+  size_t N_;
+  size_t effectiveEl_;
   std::vector<float> weights_;
 };
 } // namespace hpn

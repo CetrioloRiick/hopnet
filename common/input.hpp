@@ -1,6 +1,7 @@
 #ifndef INPUT_HPP
 #define INPUT_HPP
 #include <cxxopts.hpp>
+#include <cstddef>
 #include <filesystem>
 
 namespace hpn {
@@ -18,16 +19,18 @@ BinarizeOptions getBinOpt(int argc, char* argv[]);
 struct TrainOptions
 {
   TrainOptions(const std::filesystem::path& inp,
-               const std::filesystem::path& out);
+               const std::filesystem::path& out, int n);
   std::filesystem::path inputFile;
   std::filesystem::path outputFile;
+  size_t patternSize;
 };
 
 TrainOptions getTrainOpt(int argc, char* argv[]);
 
 struct RecallOptions
 {
-  RecallOptions(const std::filesystem::path& wei,const std::filesystem::path& inp);
+  RecallOptions(const std::filesystem::path& wei,
+                const std::filesystem::path& inp);
   std::filesystem::path weightsFile;
   std::filesystem::path inputFile;
 };

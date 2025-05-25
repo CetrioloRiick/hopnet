@@ -9,12 +9,14 @@
 #include <vector>
 
 namespace hpn {
+size_t Pattern::size_{1};
+
 Pattern::Pattern(const std::string& buffer)
 {
   std::istringstream ss(buffer);
   // Legge una stringa come fosse l'input di un std::cin
 
-  std::generate_n(std::back_inserter(pixelsValue_), pixelCount_, [&]() {
+  std::generate_n(std::back_inserter(pixelsValue_), size_, [&]() {
     int px;
     ss >> px;
     if (px != -1 && px != +1) {
@@ -22,6 +24,13 @@ Pattern::Pattern(const std::string& buffer)
     }
     return px;
   });
+}
+void Pattern::setSize(size_t n)
+{
+  size_ = n;
+  if (size_ < 1) {
+    throw std::invalid_argument("pixelCount must be greater than 1");
+  }
 }
 
 std::vector<int> Pattern::getPixelsValue() const
@@ -33,9 +42,10 @@ int Pattern::operator[](size_t index) const
 {
   return pixelsValue_[index];
 }
-int Pattern::operator[](int index) const
+
+size_t Pattern::size() const
 {
-  return pixelsValue_[static_cast<size_t>(index)];
+  return size_;
 }
 
 std::vector<Pattern> loadPatterns(const std::filesystem::path& path)
