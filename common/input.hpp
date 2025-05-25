@@ -24,5 +24,14 @@ struct TrainOptions
 };
 
 TrainOptions getTrainOpt(int argc, char* argv[]);
+
+struct RecallOptions
+{
+  RecallOptions(const std::filesystem::path& wei,const std::filesystem::path& inp);
+  std::filesystem::path weightsFile;
+  std::filesystem::path inputFile;
+};
+
+RecallOptions getRecallOpt(int argc, char* argv[]);
 } // namespace hpn
 #endif

@@ -55,14 +55,21 @@ target_link_libraries(binarize.out PRIVATE ${OpenCV_LIBS})
 
 # Executable: train.out
 add_executable(train.out
-  train/main.cpp
-  train/train.cpp
-  common/input.cpp
+    train/main.cpp
+    train/train.cpp
+    train/weight_matrix-train.cpp
+    common/weight_matrix.cpp
+    common/input.cpp
 )
-target_include_directories(train.out PRIVATE ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(train.out PRIVATE ${OpenCV_LIBS})
 
-
+# Executable: recall.out
+add_executable(recall.out
+    recall/main.cpp
+    recall/recall.cpp
+    recall/weight_matrix-recall.cpp
+    common/weight_matrix.cpp
+    common/input.cpp
+)
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 #if (BUILD_TESTING)

@@ -53,8 +53,10 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
           result["height"].as<int>(), result["threshold"].as<int>()};
 }
 
-TrainOptions::TrainOptions(const std::filesystem::path& inp, const std::filesystem::path& out)
-    : inputFile(inp), outputFile(out)
+TrainOptions::TrainOptions(const std::filesystem::path& inp,
+                           const std::filesystem::path& out)
+    : inputFile(inp)
+    , outputFile(out)
 {
   if (!std::filesystem::exists(inputFile)
       || !std::filesystem::is_regular_file(inputFile)) {
@@ -83,6 +85,44 @@ TrainOptions getTrainOpt(int argc, char* argv[])
     exit(0);
   }
 
-  return {result["input"].as<std::string>(), result["output"].as<std::string>()};
+  return {result["input"].as<std::string>(),
+          result["output"].as<std::string>()};
+}
+
+RecallOptions::RecallOptions(const std::filesystem::path& wei,
+                             const std::filesystem::path& inp)
+    : weightsFile(wei)
+    , inputFile(inp)
+{
+  if (!std::filesystem::exists(inputFile)
+      || !std::filesystem::is_regular_file(inputFile)) {
+    throw std::invalid_argument("inputFile not valid");
+  }
+}
+
+RecallOptions getRecallOpt(int argc, char* argv[])
+{
+  cxxopts::Options options(
+      "recall",
+      "Run the recall phase of a Hopfield neural network: load weights, "
+      "correct a corrupted pattern, and observe convergence.");
+
+  options.add_options()(
+      "w,weights", "Path to the weight matrix file",
+      cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))(
+      "i,input", "Corrupted input pattern to recall (as -1/+1 values)",
+      cxxopts::value<std::string>()->default_value("pattern.txt"))(
+      "h,help", "Print help");
+
+  auto result = options.parse(argc, argv);
+
+  if (result.count("help") || !result.count("input")) {
+    // Valuta la gestione dei 2 casi separati una con exception l'altra
+    std::cout << options.help() << std::endl;
+    exit(0);
+  }
+
+  return {result["weights"].as<std::string>(),
+          result["input"].as<std::string>()};
 }
 } // namespace hpn

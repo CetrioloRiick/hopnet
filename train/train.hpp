@@ -19,21 +19,6 @@ class Pattern
   std::vector<int> pixelsValue_;
 };
 std::vector<Pattern> loadPatterns(const std::filesystem::path& path);
-
-class WeightMatrix
-{
- public:
-  WeightMatrix(int N);
-  void hebbRule(const Pattern& image);
-  void hebbRule(const std::vector<Pattern>& images);
-  std::vector<float> getWeights() const;
-  void save(const std::filesystem::path& file) const;
-
- private:
-  int N_;
-  int effectiveEl_;
-  std::vector<float> weights_;
-};
 } // namespace hpn
 
 #endif
