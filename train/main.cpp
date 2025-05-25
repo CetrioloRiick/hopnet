@@ -3,22 +3,25 @@
 #include <iostream>
 #include <vector>
 
-int hpn::Pattern::pixelCount_ = 10;
+int hpn::Pattern::pixelCount_ = 100;
 int main(int argc, char* argv[])
 {
   try {
     hpn::TrainOptions opt{hpn::getTrainOpt(argc, argv)};
     std::vector<hpn::Pattern> pippe{hpn::loadPatterns(opt.inputFile)};
     for (const hpn::Pattern& i : pippe) {
-      for (size_t ind{0}; ind != 10; ++ind) {
+      for (size_t ind{0}; ind != 100; ++ind) {
         std::cout << i[ind];
       }
       std::cout << "\n\n";
     }
-    for (size_t i{0}; i < 10; ++i) {
-      std::cout << pippe[0][i];
+    hpn::WeightMatrix artanis{10};
+    artanis.hebbRule(pippe);
+    auto pluto{artanis.getWeights()};
+    for (const auto& i : pluto) {
+      std::cout << i << " ";
     }
-
+    artanis.save(opt.outputFile);
   } catch (const std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
     return 1;

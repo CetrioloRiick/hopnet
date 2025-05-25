@@ -2,6 +2,7 @@
 #include <cxxopts.hpp>
 #include <filesystem>
 #include <iostream>
+#include <string>
 
 namespace hpn {
 BinarizeOptions::BinarizeOptions(const std::filesystem::path& inp, int w, int h,
@@ -52,8 +53,8 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
           result["height"].as<int>(), result["threshold"].as<int>()};
 }
 
-TrainOptions::TrainOptions(const std::filesystem::path& inp)
-    : inputFile(inp)
+TrainOptions::TrainOptions(const std::filesystem::path& inp, const std::filesystem::path& out)
+    : inputFile(inp), outputFile(out)
 {
   if (!std::filesystem::exists(inputFile)
       || !std::filesystem::is_regular_file(inputFile)) {
@@ -71,7 +72,7 @@ TrainOptions getTrainOpt(int argc, char* argv[])
       "i,input", "Input file path",
       cxxopts::value<std::string>()->default_value("binarized-images.txt"))(
       "o,output", "Output file path for weight matrix",
-      cxxopts::value<std::string>()->default_value("weights.txt"))(
+      cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))(
       "h,help", "Print help");
 
   auto result = options.parse(argc, argv);
@@ -82,6 +83,6 @@ TrainOptions getTrainOpt(int argc, char* argv[])
     exit(0);
   }
 
-  return {result["input"].as<std::string>()};
+  return {result["input"].as<std::string>(), result["output"].as<std::string>()};
 }
 } // namespace hpn

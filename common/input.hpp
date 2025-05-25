@@ -17,8 +17,10 @@ BinarizeOptions getBinOpt(int argc, char* argv[]);
 
 struct TrainOptions
 {
-  TrainOptions(const std::filesystem::path& inp);
+  TrainOptions(const std::filesystem::path& inp,
+               const std::filesystem::path& out);
   std::filesystem::path inputFile;
+  std::filesystem::path outputFile;
 };
 
 TrainOptions getTrainOpt(int argc, char* argv[]);
