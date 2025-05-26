@@ -20,6 +20,7 @@ class WeightMatrix
 
   // Recall functions
   std::vector<float> operator*(const std::vector<float>& vec);
+  WeightMatrix(const std::vector<float>& weights);
 
  private:
   size_t N_;

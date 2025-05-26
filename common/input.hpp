@@ -3,6 +3,7 @@
 #include <cxxopts.hpp>
 #include <cstddef>
 #include <filesystem>
+#include <vector>
 
 namespace hpn {
 struct BinarizeOptions
@@ -36,5 +37,7 @@ struct RecallOptions
 };
 
 RecallOptions getRecallOpt(int argc, char* argv[]);
+
+std::vector<float> loadVector(const std::filesystem::path& path);
 } // namespace hpn
 #endif

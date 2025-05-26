@@ -1,9 +1,13 @@
 #include "recall.hpp"
 #include "../common/weight_matrix.hpp"
+#include <algorithm>
 #include <cstddef>
 #include <vector>
 
 namespace hpn {
+WeightMatrix::WeightMatrix(const std::vector<float>& weights)
+    : weights_(weights)
+{}
 std::vector<float> WeightMatrix::operator*(const std::vector<float>& vec)
 {
   std::vector<float> result(N_, 0.f);

@@ -1,6 +1,7 @@
 #include "input.hpp"
 #include <cstddef>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -128,5 +129,24 @@ RecallOptions getRecallOpt(int argc, char* argv[])
 
   return {result["weights"].as<std::string>(),
           result["input"].as<std::string>()};
+}
+std::vector<float> loadVector(const std::filesystem::path& path)
+{
+  std::vector<float> values;
+  std::ifstream is{path};
+  if (!is) {
+    throw std::runtime_error("Cannot open input file");
+  }
+
+  std::string line;
+  while (std::getline(is, line)) {
+    std::istringstream iss(line);
+    float number;
+    while (iss >> number) {
+      values.push_back(number);
+    }
+  }
+
+  return values;
 }
 } // namespace hpn
