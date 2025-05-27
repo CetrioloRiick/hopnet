@@ -1,5 +1,5 @@
-#include "train.hpp"
 #include "../common/input.hpp"
+#include "../common/pattern.hpp"
 #include "../common/weight_matrix.hpp"
 #include <iostream>
 #include <vector>
@@ -14,9 +14,7 @@ int main(int argc, char* argv[])
     std::vector<hpn::Pattern> trainingSet{hpn::loadPatterns(options.inputFile)};
 
     weights.hebbRule(trainingSet);
-
     weights.save(options.outputFile);
-
   } catch (const std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
     return 1;

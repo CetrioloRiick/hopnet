@@ -19,12 +19,15 @@ class WeightMatrix
   void save(const std::filesystem::path& file) const;
 
   // Recall functions
-  std::vector<float> operator*(const std::vector<float>& vec);
-  WeightMatrix(const std::vector<float>& weights);
+  //std::vector<float> operator*(const std::vector<float>& vec);
+  Pattern operator*(const Pattern& pat);
+  WeightMatrix(size_t N, const std::vector<float>& weights);
+  size_t effectiveSize();
 
  private:
   size_t N_;
-  size_t effectiveEl_;
+  //size_t effectiveSize_;
+  //size_t effectiveSize();
   std::vector<float> weights_;
 };
 } // namespace hpn

@@ -1,9 +1,10 @@
 #include "input.hpp"
 #include <cstddef>
 #include <filesystem>
-#include <fstream>
 #include <iostream>
 #include <string>
+// #include <type_traits>
+// #include <concepts>
 
 namespace hpn {
 BinarizeOptions::BinarizeOptions(const std::filesystem::path& inp, int w, int h,
@@ -55,10 +56,10 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
 }
 
 TrainOptions::TrainOptions(const std::filesystem::path& inp,
-                           const std::filesystem::path& out, int n)
+                           const std::filesystem::path& out, size_t n)
     : inputFile(inp)
     , outputFile(out)
-    , patternSize(static_cast<size_t>(n))
+    , patternSize(n)
 {
   if (!std::filesystem::exists(inputFile)
       || !std::filesystem::is_regular_file(inputFile)) {
@@ -78,7 +79,7 @@ TrainOptions getTrainOpt(int argc, char* argv[])
   options.add_options()(
       "i,input", "Input file path",
       cxxopts::value<std::string>()->default_value("binarized-images.txt"))(
-      "p,pattern-size", "...", cxxopts::value<int>())(
+      "p,pattern-size", "...", cxxopts::value<size_t>())(
       "o,output", "Output file path for weight matrix",
       cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))(
       "h,help", "Print help");
@@ -92,13 +93,14 @@ TrainOptions getTrainOpt(int argc, char* argv[])
   }
 
   return {result["input"].as<std::string>(), result["output"].as<std::string>(),
-          result["pattern-size"].as<int>()};
+          result["pattern-size"].as<size_t>()};
 }
 
 RecallOptions::RecallOptions(const std::filesystem::path& wei,
-                             const std::filesystem::path& inp)
+                             const std::filesystem::path& inp, size_t n)
     : weightsFile(wei)
     , inputFile(inp)
+    , patternSize(n)
 {
   if (!std::filesystem::exists(inputFile)
       || !std::filesystem::is_regular_file(inputFile)) {
@@ -118,7 +120,8 @@ RecallOptions getRecallOpt(int argc, char* argv[])
       cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))(
       "i,input", "Corrupted input pattern to recall (as -1/+1 values)",
       cxxopts::value<std::string>()->default_value("pattern.txt"))(
-      "h,help", "Print help");
+      "p,pattern-size", "...", cxxopts::value<size_t>())("h,help",
+                                                         "Print help");
 
   auto result = options.parse(argc, argv);
 
@@ -128,25 +131,29 @@ RecallOptions getRecallOpt(int argc, char* argv[])
   }
 
   return {result["weights"].as<std::string>(),
-          result["input"].as<std::string>()};
+          result["input"].as<std::string>(),
+          result["pattern-size"].as<size_t>()};
 }
-std::vector<float> loadVector(const std::filesystem::path& path)
+
+int loadInt(const std::filesystem::path& path)
 {
-  std::vector<float> values;
   std::ifstream is{path};
-  if (!is) {
-    throw std::runtime_error("Cannot open input file");
+  if (!is.is_open()) {
+    throw std::runtime_error("Cannot open input file: " + path.string());
   }
 
   std::string line;
-  while (std::getline(is, line)) {
-    std::istringstream iss(line);
-    float number;
-    while (iss >> number) {
-      values.push_back(number);
-    }
+  if (!std::getline(is, line)) {
+    throw std::runtime_error("File is empty or unreadable: " + path.string());
   }
 
-  return values;
+  std::istringstream iss(line);
+  int result;
+  if (!(iss >> result)) {
+    throw std::runtime_error("No valid integer found in first line of file: "
+                             + path.string());
+  }
+
+  return result;
 }
 } // namespace hpn

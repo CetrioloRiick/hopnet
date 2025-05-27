@@ -1,5 +1,6 @@
 #include "train.hpp"
 #include "weight_matrix.hpp"
+#include "../common/pattern.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
@@ -11,10 +12,10 @@ void WeightMatrix::hebbRule(const Pattern& image)
   size_t indexI{0};
   size_t indexJ{1};
   // Indici della matrice
-  std::for_each_n(weights_.begin(), effectiveEl_, [&](float& pippo) {
+  std::for_each_n(weights_.begin(), effectiveSize(), [&](float& val) {
     assert(indexI < indexJ);
-    pippo += static_cast<float>(image[indexI] * image[indexJ])
-           / static_cast<float>(N_);
+    val += static_cast<float>(image[indexI] * image[indexJ])
+         / static_cast<float>(N_);
     if (indexJ != N_ - 1) {
       indexJ++;
     } else {

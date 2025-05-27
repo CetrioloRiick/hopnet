@@ -42,8 +42,9 @@ include_directories(${CMAKE_SOURCE_DIR}/common)
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
 # Executable: binarize.out
 add_executable(binarize.out
-  binarize/binarize.cpp
-  common/input.cpp
+    binarize/main.cpp
+    binarize/binarize.cpp
+    common/input.cpp
 )
 
 #add_compile_options(-Wno-deprecated-enum-enum-conversion)
@@ -60,6 +61,7 @@ add_executable(train.out
     train/weight_matrix-train.cpp
     common/weight_matrix.cpp
     common/input.cpp
+    common/pattern.cpp
 )
 
 # Executable: recall.out
@@ -69,6 +71,7 @@ add_executable(recall.out
     recall/weight_matrix-recall.cpp
     common/weight_matrix.cpp
     common/input.cpp
+    common/pattern.cpp
 )
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
