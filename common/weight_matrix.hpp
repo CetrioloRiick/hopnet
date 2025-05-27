@@ -11,7 +11,7 @@ class WeightMatrix
   // Common functions
   WeightMatrix(size_t N);
   std::vector<float> getWeights() const;
-  float operator[](size_t i, size_t j);
+  float operator[](size_t i, size_t j) const;
 
   // Train functions
   void hebbRule(const Pattern& image);
@@ -22,7 +22,8 @@ class WeightMatrix
   //std::vector<float> operator*(const std::vector<float>& vec);
   Pattern operator*(const Pattern& pat);
   WeightMatrix(size_t N, const std::vector<float>& weights);
-  size_t effectiveSize();
+  size_t getN() const;
+  size_t effectiveSize() const;
 
  private:
   size_t N_;

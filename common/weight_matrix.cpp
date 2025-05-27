@@ -17,7 +17,7 @@ std::vector<float> WeightMatrix::getWeights() const
 {
   return weights_;
 }
-float WeightMatrix::operator[](size_t i, size_t j)
+float WeightMatrix::operator[](size_t i, size_t j) const
 {
   if (i >= N_ || j >= N_) {
     throw std::invalid_argument("Index of WeightMatrix out of order");
@@ -38,7 +38,10 @@ float WeightMatrix::operator[](size_t i, size_t j)
     return weights_[calcIndex(j, i)];
   }
 }
-size_t WeightMatrix::effectiveSize()
+size_t WeightMatrix::getN() const{
+  return N_;
+}
+size_t WeightMatrix::effectiveSize() const
 {
   return ((N_ * N_) - N_) / 2;
 }

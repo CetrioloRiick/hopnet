@@ -2,6 +2,7 @@
 #include "../common/pattern.hpp"
 #include "../common/weight_matrix.hpp"
 #include <cstddef>
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -40,15 +41,22 @@ Pattern WeightMatrix::operator*(const Pattern& pat)
     throw std::invalid_argument(
         "WeightMatrix dimension must match Pattern size");
   }
-  auto sign = [](float n) { return (n < 0) - (n > 0); };
+  auto sign = [](float n) { return (n > 0) - (n < 0); };
   std::vector<int> result(N_, 0.f);
 
   for (size_t i{0}; i < N_; ++i) {
     float sum{0.f};
     for (size_t j{0}; j < N_; ++j) {
       sum += (*this)[i, j] * static_cast<float>(pat[j]);
+      std::cout << "(*this)[i, j]: " << (*this)[i, j] << "   ";
+      std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pat[j])
+                << "   ";
+
+      std::cout << "sum: " << sum << '\n';
     }
     result[i] = sign(sum);
+    std::cout << "sign(sum): " << sign(sum) << "\n\n";
+
   }
 
   return result;

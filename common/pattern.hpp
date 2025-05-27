@@ -3,6 +3,8 @@
 #include <vector>
 
 namespace hpn {
+class WeightMatrix;
+
 class Pattern
 {
  public:
@@ -17,6 +19,8 @@ class Pattern
 
   static void setSize(size_t n);
   size_t size() const;
+
+  void stocazzo(const WeightMatrix& mat);
   // int operator[](int index) const;
 
  private:

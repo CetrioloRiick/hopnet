@@ -1,8 +1,10 @@
 #include "pattern.hpp"
+#include "weight_matrix.hpp"
 #include <algorithm>
 #include <cassert>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <stdexcept>
 
 namespace hpn {
@@ -99,5 +101,29 @@ std::vector<Pattern> loadPatterns(const std::filesystem::path& path)
     patterns.push_back({line});
   }
   return patterns;
+}
+
+void Pattern::stocazzo(const WeightMatrix& mat)
+{
+  if (mat.getN() != size_) {
+    throw std::invalid_argument(
+        "WeightMatrix dimension must match Pattern size");
+  }
+  auto sign = [](float n) { return (n > 0) - (n < 0); };
+  std::vector<int> result(size_, 0.f);
+
+  for (size_t i{0}; i < size_; ++i) {
+    float sum{0.f};
+    for (size_t j{0}; j < size_; ++j) {
+      sum += mat[i, j] * static_cast<float>(pixelsValue_[j]);
+      std::cout << "(*this)[i, j]: " << mat[i, j] << "   ";
+      std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pixelsValue_[j])
+                << "   ";
+
+      std::cout << "sum: " << sum << '\n';
+    }
+    pixelsValue_[i] = sign(sum);
+    std::cout << "sign(sum): " << sign(sum) << "\n\n";
+  }
 }
 } // namespace hpn

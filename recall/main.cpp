@@ -25,10 +25,9 @@ int main(int argc, char* argv[])
     do {
             ++pluto;
 
-      image1 = image;
+      image.stocazzo(weights);
 //      std::cout << "5\n";
-      image = weights * image;
-    } while (pluto == 11);
+    } while (pluto == 2);
  //   std::cout << "6\n";
     for (size_t i{0}; i < 4; ++i) {
       std::cout << "pixelValue: " << image.getPixelsValue()[i] << " | ";
