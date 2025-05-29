@@ -1,3 +1,5 @@
+#ifndef COMMON_WEIGHT_MATRIX_HPP
+#define COMMON_WEIGHT_MATRIX_HPP
 #include <cstddef>
 #include <filesystem>
 #include <vector>
@@ -32,3 +34,4 @@ class WeightMatrix
   std::vector<float> weights_;
 };
 } // namespace hpn
+#endif

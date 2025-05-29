@@ -1,2 +1,0 @@
-namespace hpn {
-} // namespace hpn

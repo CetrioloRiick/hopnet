@@ -1,8 +1,6 @@
-#ifndef BINARIZE_HPP
-#define BINARIZE_HPP
+#ifndef BINARIZE_UTILS_HPP
+#define BINARIZE_UTILS_HPP
 
-#include "opencv2/core/mat.hpp"
-#include <opencv2/opencv.hpp>
 #include <filesystem>
 
 namespace hpn {

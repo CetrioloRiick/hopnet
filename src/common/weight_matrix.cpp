@@ -1,4 +1,4 @@
-#include "weight_matrix.hpp"
+#include "common/weight_matrix.hpp"
 #include <cassert>
 #include <cstddef>
 #include <stdexcept>

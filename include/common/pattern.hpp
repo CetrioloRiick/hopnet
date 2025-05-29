@@ -1,3 +1,5 @@
+#ifndef COMMON_PATTERN_HPP
+#define COMMON_PATTERN_HPP
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -14,7 +16,7 @@ class Pattern
 
   int operator[](size_t index) const;
   // Pattern(const Pattern& other) = default;
-  //bool operator!=(const hpn::Pattern&) const = delete;
+  // bool operator!=(const hpn::Pattern&) const = delete;
   bool operator!=(const hpn::Pattern&) const;
 
   static void setSize(size_t n);
@@ -27,5 +29,9 @@ class Pattern
   static size_t size_;
   std::vector<int> pixelsValue_;
 };
+
 std::vector<Pattern> loadPatterns(const std::filesystem::path& path);
+//Qua sopra ricordati che c'è da aggiustare
+
 } // namespace hpn
+#endif

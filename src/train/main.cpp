@@ -1,6 +1,6 @@
-#include "../common/input.hpp"
-#include "../common/pattern.hpp"
-#include "../common/weight_matrix.hpp"
+#include "train/input.hpp"
+#include "common/pattern.hpp"
+#include "common/weight_matrix.hpp"
 #include <iostream>
 #include <vector>
 

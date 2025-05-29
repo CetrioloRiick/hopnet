@@ -1,7 +1,7 @@
-#include "recall.hpp"
-#include "../common/input.hpp"
-#include "../common/pattern.hpp"
-#include "../common/weight_matrix.hpp"
+#include "recall/input.hpp"
+#include "common/input.hpp"
+#include "common/pattern.hpp"
+#include "common/weight_matrix.hpp"
 
 #include <cstddef>
 #include <iostream>

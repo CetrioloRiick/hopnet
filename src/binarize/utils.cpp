@@ -1,12 +1,7 @@
-#include "binarize.hpp"
-#include "../common/input.hpp"
+#include "binarize/utils.hpp"
 #include <cxxopts.hpp>
-#include <algorithm>
 #include <cctype>
-#include <exception>
 #include <filesystem>
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <unordered_set>
 

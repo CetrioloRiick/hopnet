@@ -1,5 +1,5 @@
-#include "pattern.hpp"
-#include "weight_matrix.hpp"
+#include "common/pattern.hpp"
+#include "common/weight_matrix.hpp"
 #include <algorithm>
 #include <cassert>
 #include <filesystem>
@@ -8,7 +8,6 @@
 #include <stdexcept>
 
 namespace hpn {
-
 size_t Pattern::size_{0};
 
 Pattern::Pattern(const std::string& buffer)

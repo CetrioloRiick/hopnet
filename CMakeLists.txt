@@ -37,14 +37,17 @@ find_package(OpenCV REQUIRED)
 
 # Lo tolgo se non ci saranno common
 include_directories(${CMAKE_SOURCE_DIR}/common)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+#target_include_directories(binarize PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
 
 # dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
 # Executable: binarize.out
 add_executable(binarize.out
-    binarize/main.cpp
-    binarize/binarize.cpp
-    common/input.cpp
+    src/binarize/main.cpp
+    src/binarize/utils.cpp
+    src/binarize/input.cpp
 )
 
 #add_compile_options(-Wno-deprecated-enum-enum-conversion)
@@ -56,23 +59,23 @@ target_link_libraries(binarize.out PRIVATE ${OpenCV_LIBS})
 
 # Executable: train.out
 add_executable(train.out
-    train/main.cpp
-    train/train.cpp
-    train/weight_matrix-train.cpp
-    common/weight_matrix.cpp
-    common/input.cpp
-    common/pattern.cpp
+    src/train/main.cpp
+    src/train/input.cpp
+    src/train/weight_matrix-train.cpp
+    src/common/weight_matrix.cpp
+    src/common/pattern.cpp
 )
 
 # Executable: recall.out
 add_executable(recall.out
-    recall/main.cpp
-    recall/recall.cpp
-    recall/weight_matrix-recall.cpp
-    common/weight_matrix.cpp
-    common/input.cpp
-    common/pattern.cpp
+    src/recall/main.cpp
+    src/recall/input.cpp
+    src/recall/weight_matrix-recall.cpp
+    src/common/weight_matrix.cpp
+    src/common/input.cpp
+    src/common/pattern.cpp
 )
+
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 #if (BUILD_TESTING)
