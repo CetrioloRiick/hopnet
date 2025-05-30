@@ -1,5 +1,5 @@
-#include "binarize/utils.hpp"
 #include "binarize/input.hpp"
+#include "binarize/utils.hpp"
 #include "opencv2/core/mat.hpp"
 #include <cxxopts.hpp>
 #include <opencv2/opencv.hpp>
@@ -14,8 +14,9 @@ int main(int argc, char* argv[])
 {
   try {
     hpn::BinarizeOptions options{hpn::getBinOpt(argc, argv)};
+    auto outputPath{options.inputFolder.parent_path()};
 
-    std::ofstream fout(options.inputFolder.parent_path() / "binarized-images.txt");
+    std::ofstream fout(outputPath / "binarized-images.txt");
 
     //  Possible other implementation with the for
     /* for (const auto& entry : std::filesystem::directory_iterator(options.inputFolder))
@@ -29,18 +30,26 @@ int main(int argc, char* argv[])
               throw std::runtime_error("Error loading image: " + entry.path().string());
             }
             cv::resize(image, image, cv::Size(options.width, options.height));
+            //cv::imshow("test", image);
+            //cv::waitKey(0);
             cv::threshold(image, image, options.threshold, 255, cv::THRESH_BINARY);
+
+            if (options.show) {
+              cv::imwrite(outputPath / "binarized-images"
+                              / ("binarized-" + entry.path().filename().string()),
+                          image);
+            }
 
             // Not usable because image is not necessarily contiguous in memory
             /*std::transform(image.begin<uchar>(), image.end<uchar>(),
                            std::ostream_iterator<int>(fout, " "),
                            [](uchar val) { return val ? +1 : -1; });*/
-            for (int i = 0; i < image.rows; ++i) {
-              for (int j = 0; j < image.cols; ++j) {
+            for (int i{0}; i < image.rows; ++i) {
+              for (int j{0}; j < image.cols; ++j) {
                 fout << (image.at<uchar>(i, j) ? +1 : -1) << " ";
               }
-              fout << '\n';
             }
+            fout << '\n';
           }
         }
 
@@ -49,5 +58,5 @@ int main(int argc, char* argv[])
     std::cerr << "Exception: " << e.what() << "\n";
     return 1;
   }
-  return 0;
+  
 }

@@ -7,6 +7,7 @@
 namespace hpn {
 WeightMatrix::WeightMatrix(size_t N, const std::vector<float>& weights)
     : N_(N)
+    , effectiveSize_(((N_ * N_) - N_) / 2)
     , weights_(weights)
 {
   if (weights.size() != effectiveSize()) {
@@ -36,8 +37,7 @@ WeightMatrix::WeightMatrix(size_t N, const std::vector<float>& weights)
 Pattern WeightMatrix::operator*(const Pattern& pat)
 {
   if (N_ != pat.size()) {
-    throw std::invalid_argument(
-        "WeightMatrix dimension must match Pattern size");
+    throw std::invalid_argument("WeightMatrix dimension must match Pattern size");
   }
   auto sign = [](float n) { return (n > 0) - (n < 0); };
   std::vector<int> result(N_, 0.f);
@@ -47,14 +47,12 @@ Pattern WeightMatrix::operator*(const Pattern& pat)
     for (size_t j{0}; j < N_; ++j) {
       sum += (*this)[i, j] * static_cast<float>(pat[j]);
       std::cout << "(*this)[i, j]: " << (*this)[i, j] << "   ";
-      std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pat[j])
-                << "   ";
+      std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pat[j]) << "   ";
 
       std::cout << "sum: " << sum << '\n';
     }
     result[i] = sign(sum);
     std::cout << "sign(sum): " << sign(sum) << "\n\n";
-
   }
 
   return result;

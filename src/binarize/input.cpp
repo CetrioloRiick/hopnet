@@ -2,11 +2,13 @@
 #include <iostream>
 
 namespace hpn {
-BinarizeOptions::BinarizeOptions(const std::filesystem::path& inp, int w, int h, int t)
+BinarizeOptions::BinarizeOptions(const std::filesystem::path& inp, int w, int h, int t,
+                                 bool s)
     : inputFolder(inp)
     , width(w)
     , height(h)
     , threshold(t)
+    , show(s)
 {
   if (!std::filesystem::exists(inputFolder)
       || !std::filesystem::is_directory(inputFolder)) {
@@ -34,7 +36,9 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
       "h,height", "Height to resize each image to before binarization",
       cxxopts::value<int>()->default_value("100"))(
       "t,threshold", "Threshold for binarization (0-255)",
-      cxxopts::value<int>()->default_value("127"))("help", "Print help");
+      cxxopts::value<int>()->default_value("127"))(
+      "s,show", "Save each binarized image during processing",
+      cxxopts::value<bool>()->default_value("false"))("help", "Print help");
 
   auto result = options.parse(argc, argv);
 
@@ -45,6 +49,7 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
   }
 
   return {result["input"].as<std::string>(), result["width"].as<int>(),
-          result["height"].as<int>(), result["threshold"].as<int>()};
+          result["height"].as<int>(), result["threshold"].as<int>(),
+          result["show"].as<bool>()};
 }
 } // namespace hpn

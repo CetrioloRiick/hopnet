@@ -22,6 +22,7 @@ void WeightMatrix::hebbRule(const Pattern& image)
       indexJ = indexI + 1;
     }
   });
+  //Valuta il costum iterator
 }
 
 /* VERSIONE CON ITERATORI
@@ -54,9 +55,9 @@ void WeightMatrix::hebbRule(const std::vector<Pattern>& images)
                 [&](const Pattern& pippo) { hebbRule(pippo); });
 }
 
-void WeightMatrix::save(const std::filesystem::path& file) const
+void WeightMatrix::save(const std::filesystem::path& path) const
 {
-  std::ofstream fout(file);
+  std::ofstream fout(path);
   std::for_each(weights_.begin(), weights_.end(),
                 [&](const float& w) { fout << w << ' '; });
 }

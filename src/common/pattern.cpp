@@ -1,4 +1,5 @@
 #include "common/pattern.hpp"
+#include "common/input.hpp"
 #include "common/weight_matrix.hpp"
 #include <algorithm>
 #include <cassert>
@@ -40,14 +41,12 @@ Pattern::Pattern(const std::vector<int>& pV)
   }
 
   if (pixelsValue_.size() != size_) {
-    throw std::invalid_argument("pixelValue must have size "
-                                + std::to_string(size_));
+    throw std::invalid_argument("pixelValue must have size " + std::to_string(size_));
   }
 
   if (std::any_of(pixelsValue_.begin(), pixelsValue_.end(),
                   [](int val) { return val != -1 && val != 0 && val != 1; })) {
-    throw std::invalid_argument(
-        "pixelValue must contain only -1, 0, or 1 values");
+    throw std::invalid_argument("pixelValue must contain only -1, 0, or 1 values");
   }
 }
 
@@ -105,8 +104,7 @@ std::vector<Pattern> loadPatterns(const std::filesystem::path& path)
 void Pattern::stocazzo(const WeightMatrix& mat)
 {
   if (mat.getN() != size_) {
-    throw std::invalid_argument(
-        "WeightMatrix dimension must match Pattern size");
+    throw std::invalid_argument("WeightMatrix dimension must match Pattern size");
   }
   auto sign = [](float n) { return (n > 0) - (n < 0); };
   std::vector<int> result(size_, 0.f);
@@ -115,11 +113,11 @@ void Pattern::stocazzo(const WeightMatrix& mat)
     float sum{0.f};
     for (size_t j{0}; j < size_; ++j) {
       sum += mat[i, j] * static_cast<float>(pixelsValue_[j]);
-      std::cout << "(*this)[i, j]: " << mat[i, j] << "   ";
+      /* std::cout << "(*this)[i, j]: " << mat[i, j] << "   ";
       std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pixelsValue_[j])
                 << "   ";
 
-      std::cout << "sum: " << sum << '\n';
+      std::cout << "sum: " << sum << '\n'; */
     }
     pixelsValue_[i] = sign(sum);
     std::cout << "sign(sum): " << sign(sum) << "\n\n";

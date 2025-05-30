@@ -6,11 +6,12 @@
 namespace hpn {
 WeightMatrix::WeightMatrix(size_t N)
     : N_(N)
+    , effectiveSize_(((N_ * N_) - N_) / 2)
 {
   if (N_ < 1) {
     throw std::invalid_argument("N must be greater than 1");
   }
-  weights_.resize(effectiveSize());
+  weights_.resize(effectiveSize_);
 }
 
 std::vector<float> WeightMatrix::getWeights() const
@@ -23,7 +24,7 @@ float WeightMatrix::operator[](size_t i, size_t j) const
     throw std::invalid_argument("Index of WeightMatrix out of order");
   }
   if (i == j) {
-    return 0;
+    
   }
 
   auto calcIndex = [&](size_t I, size_t J) {
@@ -38,11 +39,12 @@ float WeightMatrix::operator[](size_t i, size_t j) const
     return weights_[calcIndex(j, i)];
   }
 }
-size_t WeightMatrix::getN() const{
+size_t WeightMatrix::getN() const
+{
   return N_;
 }
 size_t WeightMatrix::effectiveSize() const
 {
-  return ((N_ * N_) - N_) / 2;
+  return effectiveSize_;
 }
 } // namespace hpn

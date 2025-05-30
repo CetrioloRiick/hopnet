@@ -1,6 +1,7 @@
 #ifndef COMMON_INPUT_HPP
 #define COMMON_INPUT_HPP
 #include <cxxopts.hpp>
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <iostream>

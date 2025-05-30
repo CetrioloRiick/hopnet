@@ -2,6 +2,7 @@
 #define COMMON_WEIGHT_MATRIX_HPP
 #include <cstddef>
 #include <filesystem>
+#include <utility>
 #include <vector>
 
 namespace hpn {
@@ -29,9 +30,11 @@ class WeightMatrix
 
  private:
   size_t N_;
-  //size_t effectiveSize_;
+  size_t effectiveSize_;
   //size_t effectiveSize();
   std::vector<float> weights_;
+
+  std::pair<size_t, size_t> linearIndexToIJ(size_t linearIndex) const;
 };
 } // namespace hpn
 #endif
