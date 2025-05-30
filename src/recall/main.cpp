@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
                               hpn::loadVector<float>(options.weightsFile)};
 
     hpn::NeuralNetwork image{hpn::loadVector<int>(options.inputFile)};
+    image.randomize(options.noiseProbability);
 
     hpn::displayImage(image.getNeuronsValue(), 50, 50);
     hpn::NeuralNetwork image1{image};

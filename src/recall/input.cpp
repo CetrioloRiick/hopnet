@@ -7,16 +7,21 @@
 // #include <concepts>
 
 namespace hpn {
-RecallOptions::RecallOptions(const std::filesystem::path& wei,
-                             const std::filesystem::path& inp, size_t n, bool m)
-    : weightsFile(wei)
-    , inputFile(inp)
-    , patternSize(n)
-    , monitorFlag(m)
+RecallOptions::RecallOptions(const std::filesystem::path& weiF,
+                             const std::filesystem::path& inpF, size_t patS, bool monF,
+                             float noiP)
+    : weightsFile(weiF)
+    , inputFile(inpF)
+    , patternSize(patS)
+    , monitorFlag(monF)
+    , noiseProbability(noiP)
 {
   if (!std::filesystem::exists(inputFile)
       || !std::filesystem::is_regular_file(inputFile)) {
     throw std::invalid_argument("inputFile not valid");
+  }
+  if (noiseProbability < 0 || noiseProbability > 1) {
+    throw std::invalid_argument("Noise probability must be between 0 and 1");
   }
 }
 
@@ -32,9 +37,12 @@ RecallOptions getRecallOpt(int argc, char* argv[])
       "i,input", "Corrupted input pattern to recall (as -1/+1 values)",
       cxxopts::value<std::string>()->default_value("pattern.txt"))(
       "p,pattern-size", "Size of the pattern (number of neurons)",
-      cxxopts::value<size_t>())(
-      "m,monitor-process", "Enable monitoring of energy minimization during recall",
-      cxxopts::value<bool>()->default_value("true"))("h,help", "Print help");
+      cxxopts::value<size_t>())("m,monitor-process",
+                                "Enable monitoring of energy minimization during recall",
+                                cxxopts::value<bool>()->default_value("true"))(
+      "n,noise-probability",
+      "Probability of introducing noise into the input pattern (0 to 1)",
+      cxxopts::value<float>()->default_value("0"))("h,help", "Print help");
 
   auto result = options.parse(argc, argv);
 
@@ -44,6 +52,7 @@ RecallOptions getRecallOpt(int argc, char* argv[])
   }
 
   return {result["weights"].as<std::string>(), result["input"].as<std::string>(),
-          result["pattern-size"].as<size_t>(), result["monitor-process"].as<bool>()};
+          result["pattern-size"].as<size_t>(), result["monitor-process"].as<bool>(),
+          result["noise-probability"].as<float>()};
 }
 } // namespace hpn

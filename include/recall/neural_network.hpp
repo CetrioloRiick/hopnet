@@ -1,5 +1,6 @@
 #ifndef RECALL_NEURAL_NETWORK_HPP
 #define RECALL_NEURAL_NETWORK_HPP
+#include <cstddef>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -13,7 +14,7 @@ class NeuralNetwork
   NeuralNetwork(const std::string& buffer);
   NeuralNetwork(const std::vector<int>& pV);
   std::vector<int> getNeuronsValue() const;
-
+  void randomize(float prob);
   // int operator[](size_t index) const;
   // Pattern(const Pattern& other) = default;
   // bool operator!=(const hpn::Pattern&) const = delete;

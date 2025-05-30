@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <stdexcept>
 
 namespace hpn {
@@ -103,14 +104,14 @@ std::vector<NeuralNetwork> loadNeuralNetworks(const std::filesystem::path& path)
 bool NeuralNetwork::updateState(const WeightMatrix& mat)
 {
   oldNeurons_ = pixelsValue_;
-  auto sign = [](float n) { return (n > 0) - (n < 0); };
+  auto sign   = [](float n) { return (n > 0) - (n < 0); };
   std::vector<int> result(size_, 0.f);
 
   for (size_t i{0}; i < size_; ++i) {
     float sum{0.f};
     for (size_t j{0}; j < size_; ++j) {
       sum += mat[i, j] * static_cast<float>(pixelsValue_[j]);
-      //std::cout << "quici arrivodio porco!\n";
+      // std::cout << "quici arrivodio porco!\n";
 
       /* std::cout << "(*this)[i, j]: " << mat[i, j] << "   ";
       std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pixelsValue_[j])
@@ -119,9 +120,9 @@ bool NeuralNetwork::updateState(const WeightMatrix& mat)
       std::cout << "sum: " << sum << '\n'; */
     }
     pixelsValue_[i] = sign(sum);
-    //std::cout << "sign(sum): " << sign(sum) << "\n\n";
+    // std::cout << "sign(sum): " << sign(sum) << "\n\n";
   }
-  if (oldNeurons_==pixelsValue_) {
+  if (oldNeurons_ == pixelsValue_) {
     return false;
   }
   return true;
@@ -137,5 +138,15 @@ void NeuralNetwork::minimizeState(const WeightMatrix& mat, bool monitor)
     }
   }
 }
+void NeuralNetwork::randomize(float prob)
+{
+  if (prob > 1 || prob < 0) {
+    throw std::invalid_argument("Probability must be between 0 and 1");
+  }
+  std::default_random_engine eng;
+  std::uniform_real_distribution<> dis(0.0, 1.0);
 
+  std::transform(pixelsValue_.begin(), pixelsValue_.end(), pixelsValue_.begin(),
+                 [&](int val) { return (dis(eng) < prob) ? (val == 1 ? -1 : 1) : val; });
+}
 } // namespace hpn
