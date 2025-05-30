@@ -8,10 +8,11 @@
 
 namespace hpn {
 RecallOptions::RecallOptions(const std::filesystem::path& wei,
-                             const std::filesystem::path& inp, size_t n)
+                             const std::filesystem::path& inp, size_t n, bool m)
     : weightsFile(wei)
     , inputFile(inp)
     , patternSize(n)
+    , monitorFlag(m)
 {
   if (!std::filesystem::exists(inputFile)
       || !std::filesystem::is_regular_file(inputFile)) {
@@ -22,17 +23,18 @@ RecallOptions::RecallOptions(const std::filesystem::path& wei,
 RecallOptions getRecallOpt(int argc, char* argv[])
 {
   cxxopts::Options options(
-      "recall",
-      "Run the recall phase of a Hopfield neural network: load weights, "
-      "correct a corrupted pattern, and observe convergence.");
+      "recall", "Run the recall phase of a Hopfield neural network: load weights, "
+                "correct a corrupted pattern, and observe convergence.");
 
   options.add_options()(
       "w,weights", "Path to the weight matrix file",
       cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))(
       "i,input", "Corrupted input pattern to recall (as -1/+1 values)",
       cxxopts::value<std::string>()->default_value("pattern.txt"))(
-      "p,pattern-size", "...", cxxopts::value<size_t>())("h,help",
-                                                         "Print help");
+      "p,pattern-size", "Size of the pattern (number of neurons)",
+      cxxopts::value<size_t>())(
+      "m,monitor-process", "Enable monitoring of energy minimization during recall",
+      cxxopts::value<bool>()->default_value("true"))("h,help", "Print help");
 
   auto result = options.parse(argc, argv);
 
@@ -41,8 +43,7 @@ RecallOptions getRecallOpt(int argc, char* argv[])
     exit(0);
   }
 
-  return {result["weights"].as<std::string>(),
-          result["input"].as<std::string>(),
-          result["pattern-size"].as<size_t>()};
+  return {result["weights"].as<std::string>(), result["input"].as<std::string>(),
+          result["pattern-size"].as<size_t>(), result["monitor-process"].as<bool>()};
 }
 } // namespace hpn

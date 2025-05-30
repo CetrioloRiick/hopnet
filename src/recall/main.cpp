@@ -1,38 +1,36 @@
-#include "recall/input.hpp"
 #include "common/input.hpp"
-#include "common/pattern.hpp"
 #include "common/weight_matrix.hpp"
+#include "recall/input.hpp"
+#include "recall/neural_network.hpp"
+#include "recall/utils.hpp"
 
 #include <iostream>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
   try {
     hpn::RecallOptions options{hpn::getRecallOpt(argc, argv)};
-    hpn::Pattern::setSize(options.patternSize);
+    hpn::NeuralNetwork::setSize(options.patternSize);
     hpn::WeightMatrix weights{options.patternSize,
                               hpn::loadVector<float>(options.weightsFile)};
-    hpn::Pattern image{hpn::loadVector<int>(options.inputFile)};
-    
-    
-    hpn::Pattern image1{image};
-    int pluto{0};
-    do {
-            ++pluto;
 
-      image.stocazzo(weights);
-//      std::cout << "5\n";
-    } while (pluto == 2);
- //   std::cout << "6\n";
+    hpn::NeuralNetwork image{hpn::loadVector<int>(options.inputFile)};
 
- 
-    for (size_t i{0}; i < 4; ++i) {
-      std::cout << "pixelValue: " << image.getPixelsValue()[i] << " | ";
-    }
+    hpn::displayImage(image.getNeuronsValue(), 50, 50);
+    hpn::NeuralNetwork image1{image};
+
+    image.minimizeState(weights, options.monitorFlag);
+
+    //      std::cout << "5\n";
+
+    //   std::cout << "6\n";
+
+    hpn::displayImage(image.getNeuronsValue(), 50, 50);
+
     std::cout << "\n\n";
   } catch (const std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
     return 1;
   }
-  
 }

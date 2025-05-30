@@ -1,6 +1,7 @@
 #include "common/weight_matrix.hpp"
 #include <cassert>
 #include <cstddef>
+#include <iostream>
 #include <stdexcept>
 
 namespace hpn {
@@ -24,7 +25,7 @@ float WeightMatrix::operator[](size_t i, size_t j) const
     throw std::invalid_argument("Index of WeightMatrix out of order");
   }
   if (i == j) {
-    
+    return 0;
   }
 
   auto calcIndex = [&](size_t I, size_t J) {

@@ -34,6 +34,7 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined")
 
 # se usato, richiedi il componente graphics della libreria SFML (versione 2.6 in Ubuntu 24.04)
 find_package(OpenCV REQUIRED)
+find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
 
 # Lo tolgo se non ci saranno common
 include_directories(${CMAKE_SOURCE_DIR}/common)
@@ -71,11 +72,12 @@ add_executable(recall.out
     src/recall/main.cpp
     src/recall/input.cpp
     src/recall/weight_matrix-recall.cpp
+    src/recall/utils.cpp
     src/common/weight_matrix.cpp
     src/common/input.cpp
-    src/common/pattern.cpp
+    src/recall/neural_network.cpp
 )
-
+target_link_libraries(recall.out PRIVATE sfml-graphics)
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
 #if (BUILD_TESTING)

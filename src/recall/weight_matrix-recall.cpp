@@ -1,4 +1,4 @@
-#include "common/pattern.hpp"
+//#include "common/pattern.hpp"
 #include "common/weight_matrix.hpp"
 #include <iostream>
 #include <stdexcept>
@@ -34,7 +34,7 @@ WeightMatrix::WeightMatrix(size_t N, const std::vector<float>& weights)
   return result;
 } */
 
-Pattern WeightMatrix::operator*(const Pattern& pat)
+/* Pattern WeightMatrix::operator*(const Pattern& pat)
 {
   if (N_ != pat.size()) {
     throw std::invalid_argument("WeightMatrix dimension must match Pattern size");
@@ -56,7 +56,7 @@ Pattern WeightMatrix::operator*(const Pattern& pat)
   }
 
   return result;
-}
+} */
 /* PRIMA VERSIONE
 std::vector<float> WeightMatrix::operator*(const std::vector<float>& vec)
 {

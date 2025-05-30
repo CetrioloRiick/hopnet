@@ -30,12 +30,12 @@ int main(int argc, char* argv[])
               throw std::runtime_error("Error loading image: " + entry.path().string());
             }
             cv::resize(image, image, cv::Size(options.width, options.height));
-            //cv::imshow("test", image);
-            //cv::waitKey(0);
+            // cv::imshow("test", image);
+            // cv::waitKey(0);
             cv::threshold(image, image, options.threshold, 255, cv::THRESH_BINARY);
 
             if (options.show) {
-              cv::imwrite(outputPath / "binarized-images"
+              cv::imwrite(options.inputFolder.parent_path()
                               / ("binarized-" + entry.path().filename().string()),
                           image);
             }
@@ -58,5 +58,4 @@ int main(int argc, char* argv[])
     std::cerr << "Exception: " << e.what() << "\n";
     return 1;
   }
-  
 }
