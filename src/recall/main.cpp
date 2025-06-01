@@ -19,8 +19,7 @@ int main(int argc, char* argv[])
     image.randomize(options.noiseProbability);
 
     hpn::displayImage(image.getNeuronsValue(), 50, 50);
-    hpn::NeuralNetwork image1{image};
-
+    std::cout << image.getEnergy(weights) << '\n';
     image.minimizeState(weights, options.monitorFlag);
 
     //      std::cout << "5\n";

@@ -15,10 +15,7 @@ WeightMatrix::WeightMatrix(size_t N)
   weights_.resize(effectiveSize_);
 }
 
-std::vector<float> WeightMatrix::getWeights() const
-{
-  return weights_;
-}
+
 float WeightMatrix::operator[](size_t i, size_t j) const
 {
   if (i >= N_ || j >= N_) {

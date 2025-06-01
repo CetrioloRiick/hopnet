@@ -64,7 +64,7 @@ add_executable(train.out
     src/train/input.cpp
     src/train/weight_matrix-train.cpp
     src/common/weight_matrix.cpp
-    src/common/pattern.cpp
+    src/train/pattern.cpp
 )
 
 # Executable: recall.out
@@ -77,6 +77,18 @@ add_executable(recall.out
     src/common/input.cpp
     src/recall/neural_network.cpp
 )
+
+
+add_executable(test.out
+    tests/test.cpp
+    src/common/input.cpp
+    src/common/weight_matrix.cpp
+    src/train/pattern.cpp
+    src/train/weight_matrix-train.cpp
+    src/recall/weight_matrix-recall.cpp
+
+)
+add_test(NAME EccoITest COMMAND test.out)
 target_link_libraries(recall.out PRIVATE sfml-graphics)
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione

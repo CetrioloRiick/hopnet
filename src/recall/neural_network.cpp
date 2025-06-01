@@ -2,6 +2,7 @@
 #include "common/weight_matrix.hpp"
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -103,8 +104,7 @@ std::vector<NeuralNetwork> loadNeuralNetworks(const std::filesystem::path& path)
 
 bool NeuralNetwork::updateState(const WeightMatrix& mat)
 {
-  oldNeurons_ = pixelsValue_;
-  auto sign   = [](float n) { return (n > 0) - (n < 0); };
+  auto sign = [](float n) { return (n > 0) - (n < 0); };
   std::vector<int> result(size_, 0.f);
 
   for (size_t i{0}; i < size_; ++i) {
@@ -132,16 +132,21 @@ void NeuralNetwork::minimizeState(const WeightMatrix& mat, bool monitor)
   if (mat.getN() != size_) {
     throw std::invalid_argument("WeightMatrix dimension must match NeuralNetwork size");
   }
-  while (updateState(mat)) {
+  do {
+    oldNeurons_ = pixelsValue_;
+    updateState(mat);
     if (monitor) {
-      std::cout << "ENERGIA\n";
+      std::cout << getEnergy(mat);
     }
-  }
+  } while (oldNeurons_ == pixelsValue_);
 }
 void NeuralNetwork::randomize(float prob)
 {
   if (prob > 1 || prob < 0) {
     throw std::invalid_argument("Probability must be between 0 and 1");
+  }
+  if (prob == 0) {
+    return;
   }
   std::default_random_engine eng;
   std::uniform_real_distribution<> dis(0.0, 1.0);
@@ -149,4 +154,16 @@ void NeuralNetwork::randomize(float prob)
   std::transform(pixelsValue_.begin(), pixelsValue_.end(), pixelsValue_.begin(),
                  [&](int val) { return (dis(eng) < prob) ? (val == 1 ? -1 : 1) : val; });
 }
+
+float NeuralNetwork::getEnergy(const WeightMatrix& wm) const
+{
+  float sum{0.f};
+  for (size_t i{0}; i != size_; ++i) {
+    for (size_t j{0}; j != size_; ++j) {
+      sum += wm[i, j] * static_cast<float>(pixelsValue_[i] * pixelsValue_[j]);
+    }
+  }
+  return -sum / 2;
+}
+
 } // namespace hpn

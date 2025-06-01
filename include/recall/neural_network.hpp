@@ -15,6 +15,7 @@ class NeuralNetwork
   NeuralNetwork(const std::vector<int>& pV);
   std::vector<int> getNeuronsValue() const;
   void randomize(float prob);
+  float getEnergy(const WeightMatrix& wm) const;
   // int operator[](size_t index) const;
   // Pattern(const Pattern& other) = default;
   // bool operator!=(const hpn::Pattern&) const = delete;

@@ -1,4 +1,4 @@
-#include "common/pattern.hpp"
+#include "train/pattern.hpp"
 #include "common/input.hpp"
 #include "common/weight_matrix.hpp"
 #include <algorithm>

@@ -1,5 +1,5 @@
 #include "common/weight_matrix.hpp"
-#include "common/pattern.hpp"
+#include "train/pattern.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
