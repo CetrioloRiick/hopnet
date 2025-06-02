@@ -1,4 +1,3 @@
-#include "common/input.hpp"
 #include "common/weight_matrix.hpp"
 #include "recall/input.hpp"
 #include "recall/neural_network.hpp"
@@ -15,17 +14,21 @@ int main(int argc, char* argv[])
     hpn::WeightMatrix weights{options.neuronCount(),
                               hpn::loadVector<double>(options.weightsFile)};
 
-    hpn::NeuralNetwork image{hpn::loadVector<int>(options.inputFile)};
-    image.randomize(options.noiseProbability);
+    hpn::NeuralNetwork corruptedPattern{hpn::loadVector<int>(options.inputFile)};
+    corruptedPattern.randomize(options.noiseProbability);
 
-    hpn::displayImage(image.getNeuronsValue(), options.width, options.height);
-    std::cout << image.getEnergy(weights) << '\n';
-    image.minimizeState(weights, options.monitorFlag);
+    if (options.monitorFlag) {
+      hpn::displayBinImage(corruptedPattern.getNeuronsValue(), options.width,
+                           options.height);
+    }
 
+    corruptedPattern.minimizeState(weights, options.monitorFlag);
+    corruptedPattern.save(options.outputFile);
 
-    hpn::displayImage(image.getNeuronsValue(), options.width, options.height);
-
-    std::cout << "\n\n";
+    if (options.monitorFlag) {
+      hpn::displayBinImage(corruptedPattern.getNeuronsValue(), options.width,
+                           options.height);
+    }
   } catch (const std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
     return 1;

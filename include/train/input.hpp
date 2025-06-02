@@ -7,13 +7,12 @@ namespace hpn {
 struct TrainOptions
 {
   TrainOptions(const std::filesystem::path& inp,
-               const std::filesystem::path& out, size_t n);
+               const std::filesystem::path& out, size_t p);
   std::filesystem::path inputFile;
   std::filesystem::path outputFile;
   size_t patternSize;
 };
 
 TrainOptions getTrainOpt(int argc, char* argv[]);
-
 } // namespace hpn
 #endif

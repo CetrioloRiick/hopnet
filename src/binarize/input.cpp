@@ -36,9 +36,9 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
   options.add_options()("i,input", "Input folder path", cxxopts::value<std::string>())(
       "o,output", "Output file path",
       cxxopts::value<std::string>()->default_value("binarized-image.txt"))(
-      "w,width", "Width to resize each image to before binarization",
+      "W,width", "Width to resize each image to before binarization",
       cxxopts::value<int>()->default_value("100"))(
-      "h,height", "Height to resize each image to before binarization",
+      "H,height", "Height to resize each image to before binarization",
       cxxopts::value<int>()->default_value("100"))(
       "t,threshold", "Threshold for binarization (0-255)",
       cxxopts::value<int>()->default_value("127"))(
@@ -48,7 +48,6 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
   auto result = options.parse(argc, argv);
 
   if (result.count("help") || !result.count("input")) {
-    // Valuta la gestione dei 2 casi separati una con excption l'altra
     std::cout << options.help() << std::endl;
     exit(0);
   }

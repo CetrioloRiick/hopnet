@@ -1,6 +1,5 @@
 #ifndef BINARIZE_UTILS_HPP
 #define BINARIZE_UTILS_HPP
-
 #include <filesystem>
 
 namespace hpn {

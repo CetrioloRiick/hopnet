@@ -74,21 +74,18 @@ add_executable(recall.out
     src/recall/weight_matrix-recall.cpp
     src/recall/utils.cpp
     src/common/weight_matrix.cpp
-    src/common/input.cpp
     src/recall/neural_network.cpp
 )
 
-
 add_executable(test.out
     tests/test.cpp
-    src/common/input.cpp
     src/common/weight_matrix.cpp
     src/train/pattern.cpp
     src/train/weight_matrix-train.cpp
     src/recall/weight_matrix-recall.cpp
     src/recall/neural_network.cpp
-
 )
+
 add_test(NAME EccoITest COMMAND test.out)
 target_link_libraries(recall.out PRIVATE sfml-graphics)
 # il testing e' abilitato di default

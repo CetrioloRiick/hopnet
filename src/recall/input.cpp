@@ -3,19 +3,19 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
-// #include <type_traits>
-// #include <concepts>
 
 namespace hpn {
-RecallOptions::RecallOptions(const std::filesystem::path& weiF,
-                             const std::filesystem::path& inpF, int w, int h, bool monF,
-                             double noiP)
-    : weightsFile(weiF)
-    , inputFile(inpF)
+RecallOptions::RecallOptions(const std::filesystem::path& wei,
+                             const std::filesystem::path& inp,
+                             const std::filesystem::path& out, int w, int h, bool mon,
+                             double noi)
+    : weightsFile(wei)
+    , inputFile(inp)
+    , outputFile(out)
     , width(w)
     , height(h)
-    , monitorFlag(monF)
-    , noiseProbability(noiP)
+    , monitorFlag(mon)
+    , noiseProbability(noi)
 {
   if (!std::filesystem::exists(inputFile)
       || !std::filesystem::is_regular_file(inputFile)) {
@@ -48,6 +48,8 @@ RecallOptions getRecallOpt(int argc, char* argv[])
       cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))(
       "i,input", "Corrupted input pattern to recall (as -1/+1 values)",
       cxxopts::value<std::string>()->default_value("pattern.txt"))(
+      "o,output", "Output file path",
+      cxxopts::value<std::string>()->default_value("corrected-pattern.txt"))(
       "W,width", "Width (in pixels) of the input pattern",
       cxxopts::value<int>()->default_value("100"))(
       "H,height", "Height (in pixels) of the input pattern",
@@ -67,10 +69,10 @@ RecallOptions getRecallOpt(int argc, char* argv[])
 
   return {result["weights"].as<std::string>(),
           result["input"].as<std::string>(),
+          result["output"].as<std::string>(),
           result["width"].as<int>(),
           result["height"].as<int>(),
           result["monitor-process"].as<bool>(),
           result["noise-probability"].as<double>()};
 }
-
 } // namespace hpn

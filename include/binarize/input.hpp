@@ -1,5 +1,5 @@
-#ifndef INPUT_BINARIZE_HPP
-#define INPUT_BINARIZE_HPP
+#ifndef BINARIZE_INPUT_HPP
+#define BINARIZE_INPUT_HPP
 #include <cxxopts.hpp>
 #include <filesystem>
 

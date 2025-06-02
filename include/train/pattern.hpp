@@ -14,14 +14,9 @@ class Pattern
   std::vector<int> getPixelsValue() const;
 
   int operator[](size_t index) const;
-  // Pattern(const Pattern& other) = default;
-  // bool operator!=(const hpn::Pattern&) const = delete;
-  bool operator!=(const hpn::Pattern&) const;
 
   static void setSize(size_t n);
   size_t size() const;
-
-  // int operator[](int index) const;
 
  private:
   static size_t size_;

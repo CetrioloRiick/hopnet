@@ -6,6 +6,7 @@
 #include <iostream>
 #include <random>
 #include <stdexcept>
+#include <fstream>
 
 namespace hpn {
 size_t NeuralNetwork::size_{0};
@@ -45,18 +46,6 @@ int& NeuralNetwork::operator[](size_t index)
   return neurons_[index];
 }
 
-/* bool NeuralNetwork::operator!=(const hpn::NeuralNetwork& other) const
-{
-  if (neurons_ != other.getNeuronsValue()) {
-    return true;
-  } else {
-    return false;
-  }
-} */
-/* NeuralNetwork NeuralNetwork::operator=(const NeuralNetwork& p){
-
-} */
-
 size_t NeuralNetwork::size() const
 {
   return size_;
@@ -64,42 +53,36 @@ size_t NeuralNetwork::size() const
 
 bool NeuralNetwork::updateState(const WeightMatrix& mat)
 {
+  oldNeurons_ = neurons_;
+
   auto sign = [](double n) { return (n > 0) - (n < 0); };
-  std::vector<int> result(size_, 0.f);
 
   for (size_t i{0}; i < size_; ++i) {
     double sum{0.f};
     for (size_t j{0}; j < size_; ++j) {
       sum += mat[i, j] * static_cast<double>(neurons_[j]);
-      // std::cout << "quici arrivodio porco!\n";
-
-      /* std::cout << "(*this)[i, j]: " << mat[i, j] << "   ";
-      std::cout << "static_cast<double>(pat[j]) " << static_cast<double>(neurons_[j])
-                << "   ";
-
-      std::cout << "sum: " << sum << '\n'; */
     }
     neurons_[i] = sign(sum);
-    // std::cout << "sign(sum): " << sign(sum) << "\n\n";
   }
+
   if (oldNeurons_ == neurons_) {
     return false;
   }
   return true;
 }
+
 void NeuralNetwork::minimizeState(const WeightMatrix& mat, bool monitor)
 {
   if (mat.getN() != size_) {
     throw std::invalid_argument("WeightMatrix dimension must match NeuralNetwork size");
   }
   do {
-    oldNeurons_ = neurons_;
-    updateState(mat);
     if (monitor) {
       std::cout << "Energy: " << getEnergy(mat) << std::endl;
     }
-  } while (oldNeurons_ != neurons_);
+  } while (updateState(mat));
 }
+
 void NeuralNetwork::randomize(double prob)
 {
   if (prob > 1 || prob < 0) {
@@ -124,6 +107,13 @@ double NeuralNetwork::getEnergy(const WeightMatrix& wm) const
     }
   }
   return -sum / 2;
+}
+
+void NeuralNetwork::save(const std::filesystem::path& path) const
+{
+  std::ofstream fout(path);
+  std::for_each(neurons_.begin(), neurons_.end(),
+                [&](const double& w) { fout << w << ' '; });
 }
 
 } // namespace hpn

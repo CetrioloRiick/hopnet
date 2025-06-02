@@ -21,32 +21,7 @@ void WeightMatrix::hebbRule(const Pattern& sample)
       indexJ = indexI + 1;
     }
   });
-  // Valuta il costum iterator
 }
-
-/* VERSIONE CON ITERATORI
-void WeightMatrix::hebbRule(const Pattern& image)
-{
-int num{((N_ * N_) - N_) / 2};
-auto pluto    = image.getPixelsValue().begin();
-auto paperino = image.getPixelsValue().begin();
-int index{0};
-int index2{0};
-std::for_each_n(weights_.begin(), num, [&](double& pippo) {
-if (index != index2) {
-  pippo +=
-      static_cast<double>((*pluto) * (*paperino)) / static_cast<double>(N_);
-}
-if (index2 != N_ - 1) {
-  paperino++;
-} else {
-  pluto++;
-  paperino=image.getPixelsValue().begin();
-  paperino+=pluto;
-}
-
-});
-}*/
 
 void WeightMatrix::hebbRule(const std::vector<Pattern>& samples)
 {
