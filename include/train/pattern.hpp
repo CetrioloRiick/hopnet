@@ -11,7 +11,6 @@ class Pattern
 {
  public:
   Pattern(const std::string& buffer);
-  Pattern(const std::vector<int>& pV);
   std::vector<int> getPixelsValue() const;
 
   int operator[](size_t index) const;
@@ -22,7 +21,6 @@ class Pattern
   static void setSize(size_t n);
   size_t size() const;
 
-  void stocazzo(const WeightMatrix& mat);
   // int operator[](int index) const;
 
  private:
@@ -31,7 +29,6 @@ class Pattern
 };
 
 std::vector<Pattern> loadPatterns(const std::filesystem::path& path);
-//Qua sopra ricordati che c'è da aggiustare
 
 } // namespace hpn
 #endif

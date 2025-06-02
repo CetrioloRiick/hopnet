@@ -14,9 +14,9 @@ int main(int argc, char* argv[])
 {
   try {
     hpn::BinarizeOptions options{hpn::getBinOpt(argc, argv)};
-    auto outputPath{options.inputFolder.parent_path()};
+    //auto outputPath{options.inputFolder.parent_path()};
 
-    std::ofstream fout(outputPath / "binarized-images.txt");
+    std::ofstream fout(options.outputFile);
 
     //  Possible other implementation with the for
     /* for (const auto& entry : std::filesystem::directory_iterator(options.inputFolder))

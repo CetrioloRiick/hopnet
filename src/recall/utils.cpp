@@ -1,11 +1,14 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace hpn {
 void displayImage(const std::vector<int>& data, unsigned int width, unsigned int height)
 {
   if (data.size() != width * height) {
+    std::cout << "data.size(): " << data.size() << '\n';
     throw std::invalid_argument("Vector size does not match width * height");
   }
 

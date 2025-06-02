@@ -6,15 +6,14 @@
 #include <fstream>
 
 namespace hpn {
-void WeightMatrix::hebbRule(const Pattern& image)
+void WeightMatrix::hebbRule(const Pattern& sample)
 {
   size_t indexI{0};
   size_t indexJ{1};
   // Indici della matrice
-  std::for_each_n(weights_.begin(), effectiveSize(), [&](float& val) {
+  std::for_each_n(weights_.begin(), effectiveSize(), [&](double& val) {
     assert(indexI < indexJ);
-    val += static_cast<float>(image[indexI] * image[indexJ])
-         / static_cast<float>(N_);
+    val += static_cast<double>(sample[indexI] * sample[indexJ]) / static_cast<double>(N_);
     if (indexJ != N_ - 1) {
       indexJ++;
     } else {
@@ -22,7 +21,7 @@ void WeightMatrix::hebbRule(const Pattern& image)
       indexJ = indexI + 1;
     }
   });
-  //Valuta il costum iterator
+  // Valuta il costum iterator
 }
 
 /* VERSIONE CON ITERATORI
@@ -33,10 +32,10 @@ auto pluto    = image.getPixelsValue().begin();
 auto paperino = image.getPixelsValue().begin();
 int index{0};
 int index2{0};
-std::for_each_n(weights_.begin(), num, [&](float& pippo) {
+std::for_each_n(weights_.begin(), num, [&](double& pippo) {
 if (index != index2) {
   pippo +=
-      static_cast<float>((*pluto) * (*paperino)) / static_cast<float>(N_);
+      static_cast<double>((*pluto) * (*paperino)) / static_cast<double>(N_);
 }
 if (index2 != N_ - 1) {
   paperino++;
@@ -49,17 +48,17 @@ if (index2 != N_ - 1) {
 });
 }*/
 
-void WeightMatrix::hebbRule(const std::vector<Pattern>& images)
+void WeightMatrix::hebbRule(const std::vector<Pattern>& samples)
 {
-  std::for_each(images.begin(), images.end(),
-                [&](const Pattern& pippo) { hebbRule(pippo); });
+  std::for_each(samples.begin(), samples.end(),
+                [&](const Pattern& pat) { hebbRule(pat); });
 }
 
 void WeightMatrix::save(const std::filesystem::path& path) const
 {
   std::ofstream fout(path);
   std::for_each(weights_.begin(), weights_.end(),
-                [&](const float& w) { fout << w << ' '; });
+                [&](const double& w) { fout << w << ' '; });
 }
 
 } // namespace hpn

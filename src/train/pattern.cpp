@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <ostream>
 #include <stdexcept>
 
 namespace hpn {
@@ -18,22 +19,21 @@ Pattern::Pattern(const std::string& buffer)
   }
   std::istringstream ss(buffer);
   // Legge una stringa come fosse l'input di un std::cin
-
   std::generate_n(std::back_inserter(pixelsValue_), size_, [&]() {
     int px;
     ss >> px;
-    if (px != -1 && px != +1) {
-      throw std::invalid_argument("Invalid value in pattern: must be -1 or +1");
-    }
     if (!ss) {
       throw std::invalid_argument("buffer troppo non valido/troppo corto");
+    }
+    if (px != -1 && px != +1) {
+      throw std::invalid_argument("Invalid value in pattern: must be -1 or +1");
     }
     return px;
   });
   assert(pixelsValue_.size() == size_);
 }
 
-Pattern::Pattern(const std::vector<int>& pV)
+/* Pattern::Pattern(const std::vector<int>& pV)
     : pixelsValue_(pV)
 {
   if (size_ == 0) {
@@ -48,7 +48,7 @@ Pattern::Pattern(const std::vector<int>& pV)
                   [](int val) { return val != -1 && val != 0 && val != 1; })) {
     throw std::invalid_argument("pixelValue must contain only -1, 0, or 1 values");
   }
-}
+} */
 
 void Pattern::setSize(size_t n)
 {
@@ -99,28 +99,5 @@ std::vector<Pattern> loadPatterns(const std::filesystem::path& path)
     patterns.push_back({line});
   }
   return patterns;
-}
-
-void Pattern::stocazzo(const WeightMatrix& mat)
-{
-  if (mat.getN() != size_) {
-    throw std::invalid_argument("WeightMatrix dimension must match Pattern size");
-  }
-  auto sign = [](float n) { return (n > 0) - (n < 0); };
-  std::vector<int> result(size_, 0.f);
-
-  for (size_t i{0}; i < size_; ++i) {
-    float sum{0.f};
-    for (size_t j{0}; j < size_; ++j) {
-      sum += mat[i, j] * static_cast<float>(pixelsValue_[j]);
-      /* std::cout << "(*this)[i, j]: " << mat[i, j] << "   ";
-      std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pixelsValue_[j])
-                << "   ";
-
-      std::cout << "sum: " << sum << '\n'; */
-    }
-    pixelsValue_[i] = sign(sum);
-    std::cout << "sign(sum): " << sign(sum) << "\n\n";
-  }
 }
 } // namespace hpn

@@ -15,6 +15,5 @@ struct TrainOptions
 
 TrainOptions getTrainOpt(int argc, char* argv[]);
 
-int loadInt(const std::filesystem::path& path);
 } // namespace hpn
 #endif

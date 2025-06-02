@@ -1,10 +1,13 @@
 #include "binarize/input.hpp"
 #include <iostream>
+#include <string>
 
 namespace hpn {
-BinarizeOptions::BinarizeOptions(const std::filesystem::path& inp, int w, int h, int t,
+BinarizeOptions::BinarizeOptions(const std::filesystem::path& inp,
+                                 const std::filesystem::path& out, int w, int h, int t,
                                  bool s)
     : inputFolder(inp)
+    , outputFile(out)
     , width(w)
     , height(h)
     , threshold(t)
@@ -31,6 +34,8 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
                            "Convert all images in a folder to binary format (-1, +1)");
 
   options.add_options()("i,input", "Input folder path", cxxopts::value<std::string>())(
+      "o,output", "Output file path",
+      cxxopts::value<std::string>()->default_value("binarized-image.txt"))(
       "w,width", "Width to resize each image to before binarization",
       cxxopts::value<int>()->default_value("100"))(
       "h,height", "Height to resize each image to before binarization",
@@ -48,8 +53,8 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
     exit(0);
   }
 
-  return {result["input"].as<std::string>(), result["width"].as<int>(),
-          result["height"].as<int>(), result["threshold"].as<int>(),
-          result["show"].as<bool>()};
+  return {result["input"].as<std::string>(), result["output"].as<std::string>(),
+          result["width"].as<int>(),         result["height"].as<int>(),
+          result["threshold"].as<int>(),     result["show"].as<bool>()};
 }
 } // namespace hpn

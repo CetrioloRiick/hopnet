@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace hpn {
-WeightMatrix::WeightMatrix(size_t N, const std::vector<float>& weights)
+WeightMatrix::WeightMatrix(size_t N, const std::vector<double>& weights)
     : N_(N)
     , effectiveSize_(((N_ * N_) - N_) / 2)
     , weights_(weights)
@@ -16,16 +16,16 @@ WeightMatrix::WeightMatrix(size_t N, const std::vector<float>& weights)
   }
 
   /* if (std::any_of(weights.begin(), weights.end(),
-                  [](const float val) { return val > 1; })) {
+                  [](const double val) { return val > 1; })) {
 
   } */
 }
-/* std::vector<float> WeightMatrix::operator*(const std::vector<float>& vec)
+/* std::vector<double> WeightMatrix::operator*(const std::vector<double>& vec)
 {
-  std::vector<float> result(N_, 0.f);
+  std::vector<double> result(N_, 0.f);
 
   for (size_t i{0}; i < N_; ++i) {
-    float sum{0.f};
+    double sum{0.f};
     for (size_t j{0}; j < N_; ++j) {
       sum += (*this)[i, j] * vec[j];
     }
@@ -39,15 +39,15 @@ WeightMatrix::WeightMatrix(size_t N, const std::vector<float>& weights)
   if (N_ != pat.size()) {
     throw std::invalid_argument("WeightMatrix dimension must match Pattern size");
   }
-  auto sign = [](float n) { return (n > 0) - (n < 0); };
+  auto sign = [](double n) { return (n > 0) - (n < 0); };
   std::vector<int> result(N_, 0.f);
 
   for (size_t i{0}; i < N_; ++i) {
-    float sum{0.f};
+    double sum{0.f};
     for (size_t j{0}; j < N_; ++j) {
-      sum += (*this)[i, j] * static_cast<float>(pat[j]);
+      sum += (*this)[i, j] * static_cast<double>(pat[j]);
       std::cout << "(*this)[i, j]: " << (*this)[i, j] << "   ";
-      std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pat[j]) << "   ";
+      std::cout << "static_cast<double>(pat[j]) " << static_cast<double>(pat[j]) << "   ";
 
       std::cout << "sum: " << sum << '\n';
     }
@@ -58,14 +58,14 @@ WeightMatrix::WeightMatrix(size_t N, const std::vector<float>& weights)
   return result;
 } */
 /* PRIMA VERSIONE
-std::vector<float> WeightMatrix::operator*(const std::vector<float>& vec)
+std::vector<double> WeightMatrix::operator*(const std::vector<double>& vec)
 {
-std::vector<float> result;
+std::vector<double> result;
 for (int i{0}; i != N_; ++i) {
 int j{0};
 result.push_back(
-    std::accumulate(vec.begin(), vec.end(), 0.f, [&](float acc, float val) {
-      float res{val * (*this)[i, j]};
+    std::accumulate(vec.begin(), vec.end(), 0.f, [&](double acc, double val) {
+      double res{val * (*this)[i, j]};
       ++j;
       return acc + res;
     }));

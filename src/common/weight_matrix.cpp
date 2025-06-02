@@ -16,7 +16,7 @@ WeightMatrix::WeightMatrix(size_t N)
 }
 
 
-float WeightMatrix::operator[](size_t i, size_t j) const
+double WeightMatrix::operator[](size_t i, size_t j) const
 {
   if (i >= N_ || j >= N_) {
     throw std::invalid_argument("Index of WeightMatrix out of order");

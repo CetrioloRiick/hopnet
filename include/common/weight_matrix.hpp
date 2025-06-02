@@ -2,7 +2,6 @@
 #define COMMON_WEIGHT_MATRIX_HPP
 #include <cstddef>
 #include <filesystem>
-#include <utility>
 #include <vector>
 
 namespace hpn {
@@ -13,7 +12,7 @@ class WeightMatrix
  public:
   // Common functions
   WeightMatrix(size_t N);
-  float operator[](size_t i, size_t j) const;
+  double operator[](size_t i, size_t j) const;
 
   // Train functions
   void hebbRule(const Pattern& image);
@@ -21,8 +20,8 @@ class WeightMatrix
   void save(const std::filesystem::path& file) const;
 
   // Recall functions
-  //std::vector<float> operator*(const std::vector<float>& vec);
-  WeightMatrix(size_t N, const std::vector<float>& weights);
+  //std::vector<double> operator*(const std::vector<double>& vec);
+  WeightMatrix(size_t N, const std::vector<double>& weights);
   size_t getN() const;
   size_t effectiveSize() const;
 
@@ -30,7 +29,7 @@ class WeightMatrix
   size_t N_;
   size_t effectiveSize_;
   //size_t effectiveSize();
-  std::vector<float> weights_;
+  std::vector<double> weights_;
 };
 } // namespace hpn
 #endif

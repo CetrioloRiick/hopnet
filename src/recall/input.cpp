@@ -8,11 +8,12 @@
 
 namespace hpn {
 RecallOptions::RecallOptions(const std::filesystem::path& weiF,
-                             const std::filesystem::path& inpF, size_t patS, bool monF,
-                             float noiP)
+                             const std::filesystem::path& inpF, int w, int h, bool monF,
+                             double noiP)
     : weightsFile(weiF)
     , inputFile(inpF)
-    , patternSize(patS)
+    , width(w)
+    , height(h)
     , monitorFlag(monF)
     , noiseProbability(noiP)
 {
@@ -20,9 +21,20 @@ RecallOptions::RecallOptions(const std::filesystem::path& weiF,
       || !std::filesystem::is_regular_file(inputFile)) {
     throw std::invalid_argument("inputFile not valid");
   }
+  if (width < 1) {
+    throw std::invalid_argument("width must be greater than 1");
+  }
+  if (height < 1) {
+    throw std::invalid_argument("height must be greater than 1");
+  }
   if (noiseProbability < 0 || noiseProbability > 1) {
     throw std::invalid_argument("Noise probability must be between 0 and 1");
   }
+}
+
+size_t RecallOptions::neuronCount()
+{
+  return static_cast<size_t>(width * height);
 }
 
 RecallOptions getRecallOpt(int argc, char* argv[])
@@ -36,13 +48,15 @@ RecallOptions getRecallOpt(int argc, char* argv[])
       cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))(
       "i,input", "Corrupted input pattern to recall (as -1/+1 values)",
       cxxopts::value<std::string>()->default_value("pattern.txt"))(
-      "p,pattern-size", "Size of the pattern (number of neurons)",
-      cxxopts::value<size_t>())("m,monitor-process",
-                                "Enable monitoring of energy minimization during recall",
-                                cxxopts::value<bool>()->default_value("true"))(
+      "W,width", "Width (in pixels) of the input pattern",
+      cxxopts::value<int>()->default_value("100"))(
+      "H,height", "Height (in pixels) of the input pattern",
+      cxxopts::value<int>()->default_value("100"))(
+      "m,monitor-process", "Enable monitoring of energy minimization during recall",
+      cxxopts::value<bool>()->default_value("true"))(
       "n,noise-probability",
       "Probability of introducing noise into the input pattern (0 to 1)",
-      cxxopts::value<float>()->default_value("0"))("h,help", "Print help");
+      cxxopts::value<double>()->default_value("0"))("h,help", "Print help");
 
   auto result = options.parse(argc, argv);
 
@@ -51,8 +65,12 @@ RecallOptions getRecallOpt(int argc, char* argv[])
     exit(0);
   }
 
-  return {result["weights"].as<std::string>(), result["input"].as<std::string>(),
-          result["pattern-size"].as<size_t>(), result["monitor-process"].as<bool>(),
-          result["noise-probability"].as<float>()};
+  return {result["weights"].as<std::string>(),
+          result["input"].as<std::string>(),
+          result["width"].as<int>(),
+          result["height"].as<int>(),
+          result["monitor-process"].as<bool>(),
+          result["noise-probability"].as<double>()};
 }
+
 } // namespace hpn

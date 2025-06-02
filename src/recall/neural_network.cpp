@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
-#include <filesystem>
-#include <fstream>
 #include <iostream>
 #include <random>
 #include <stdexcept>
@@ -12,42 +10,20 @@
 namespace hpn {
 size_t NeuralNetwork::size_{0};
 
-NeuralNetwork::NeuralNetwork(const std::string& buffer)
-{
-  if (size_ == 0) {
-    throw std::runtime_error("Set size before creating instances");
-  }
-  std::istringstream ss(buffer);
-  // Legge una stringa come fosse l'input di un std::cin
-
-  std::generate_n(std::back_inserter(pixelsValue_), size_, [&]() {
-    int px;
-    ss >> px;
-    if (px != -1 && px != +1) {
-      throw std::invalid_argument("Invalid value in pattern: must be -1 or +1");
-    }
-    if (!ss) {
-      throw std::invalid_argument("buffer troppo non valido/troppo corto");
-    }
-    return px;
-  });
-  assert(pixelsValue_.size() == size_);
-}
-
-NeuralNetwork::NeuralNetwork(const std::vector<int>& pV)
-    : pixelsValue_(pV)
+NeuralNetwork::NeuralNetwork(const std::vector<int>& n)
+    : neurons_(n)
 {
   if (size_ == 0) {
     throw std::runtime_error("Set size before creating instances");
   }
 
-  if (pixelsValue_.size() != size_) {
-    throw std::invalid_argument("pixelValue must have size " + std::to_string(size_));
+  if (neurons_.size() != size_) {
+    throw std::invalid_argument("Neurons must have size " + std::to_string(size_));
   }
 
-  if (std::any_of(pixelsValue_.begin(), pixelsValue_.end(),
+  if (std::any_of(neurons_.begin(), neurons_.end(),
                   [](int val) { return val != -1 && val != 0 && val != 1; })) {
-    throw std::invalid_argument("pixelValue must contain only -1, 0, or 1 values");
+    throw std::invalid_argument("Neurons must contain only -1, 0, or 1 values");
   }
 }
 
@@ -57,24 +33,21 @@ void NeuralNetwork::setSize(size_t n)
     throw std::runtime_error("Size already set");
   }
   size_ = n;
-  if (size_ < 1) {
-    throw std::invalid_argument("pixelCount must be greater than 1");
-  }
 }
 
 std::vector<int> NeuralNetwork::getNeuronsValue() const
 {
-  return pixelsValue_;
+  return neurons_;
 }
 
 int& NeuralNetwork::operator[](size_t index)
 {
-  return pixelsValue_[index];
+  return neurons_[index];
 }
 
 /* bool NeuralNetwork::operator!=(const hpn::NeuralNetwork& other) const
 {
-  if (pixelsValue_ != other.getNeuronsValue()) {
+  if (neurons_ != other.getNeuronsValue()) {
     return true;
   } else {
     return false;
@@ -88,41 +61,28 @@ size_t NeuralNetwork::size() const
 {
   return size_;
 }
-std::vector<NeuralNetwork> loadNeuralNetworks(const std::filesystem::path& path)
-{
-  std::ifstream is{path};
-  if (!is) {
-    throw std::runtime_error("Cannot open input file");
-  }
-  std::vector<NeuralNetwork> patterns;
-  std::string line;
-  while (std::getline(is, line)) {
-    patterns.push_back({line});
-  }
-  return patterns;
-}
 
 bool NeuralNetwork::updateState(const WeightMatrix& mat)
 {
-  auto sign = [](float n) { return (n > 0) - (n < 0); };
+  auto sign = [](double n) { return (n > 0) - (n < 0); };
   std::vector<int> result(size_, 0.f);
 
   for (size_t i{0}; i < size_; ++i) {
-    float sum{0.f};
+    double sum{0.f};
     for (size_t j{0}; j < size_; ++j) {
-      sum += mat[i, j] * static_cast<float>(pixelsValue_[j]);
+      sum += mat[i, j] * static_cast<double>(neurons_[j]);
       // std::cout << "quici arrivodio porco!\n";
 
       /* std::cout << "(*this)[i, j]: " << mat[i, j] << "   ";
-      std::cout << "static_cast<float>(pat[j]) " << static_cast<float>(pixelsValue_[j])
+      std::cout << "static_cast<double>(pat[j]) " << static_cast<double>(neurons_[j])
                 << "   ";
 
       std::cout << "sum: " << sum << '\n'; */
     }
-    pixelsValue_[i] = sign(sum);
+    neurons_[i] = sign(sum);
     // std::cout << "sign(sum): " << sign(sum) << "\n\n";
   }
-  if (oldNeurons_ == pixelsValue_) {
+  if (oldNeurons_ == neurons_) {
     return false;
   }
   return true;
@@ -133,14 +93,14 @@ void NeuralNetwork::minimizeState(const WeightMatrix& mat, bool monitor)
     throw std::invalid_argument("WeightMatrix dimension must match NeuralNetwork size");
   }
   do {
-    oldNeurons_ = pixelsValue_;
+    oldNeurons_ = neurons_;
     updateState(mat);
     if (monitor) {
-      std::cout << getEnergy(mat);
+      std::cout << "Energy: " << getEnergy(mat) << std::endl;
     }
-  } while (oldNeurons_ == pixelsValue_);
+  } while (oldNeurons_ != neurons_);
 }
-void NeuralNetwork::randomize(float prob)
+void NeuralNetwork::randomize(double prob)
 {
   if (prob > 1 || prob < 0) {
     throw std::invalid_argument("Probability must be between 0 and 1");
@@ -151,16 +111,16 @@ void NeuralNetwork::randomize(float prob)
   std::default_random_engine eng;
   std::uniform_real_distribution<> dis(0.0, 1.0);
 
-  std::transform(pixelsValue_.begin(), pixelsValue_.end(), pixelsValue_.begin(),
+  std::transform(neurons_.begin(), neurons_.end(), neurons_.begin(),
                  [&](int val) { return (dis(eng) < prob) ? (val == 1 ? -1 : 1) : val; });
 }
 
-float NeuralNetwork::getEnergy(const WeightMatrix& wm) const
+double NeuralNetwork::getEnergy(const WeightMatrix& wm) const
 {
-  float sum{0.f};
+  double sum{0.f};
   for (size_t i{0}; i != size_; ++i) {
     for (size_t j{0}; j != size_; ++j) {
-      sum += wm[i, j] * static_cast<float>(pixelsValue_[i] * pixelsValue_[j]);
+      sum += wm[i, j] * static_cast<double>(neurons_[i] * neurons_[j]);
     }
   }
   return -sum / 2;

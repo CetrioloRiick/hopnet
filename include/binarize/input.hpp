@@ -6,8 +6,10 @@
 namespace hpn {
 struct BinarizeOptions
 {
-  BinarizeOptions(const std::filesystem::path& inp, int w, int h, int t, bool s);
+  BinarizeOptions(const std::filesystem::path& inp, const std::filesystem::path& out,
+                  int w, int h, int t, bool s);
   std::filesystem::path inputFolder;
+  std::filesystem::path outputFile;
   int width;
   int height;
   int threshold;

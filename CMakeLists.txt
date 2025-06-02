@@ -86,6 +86,7 @@ add_executable(test.out
     src/train/pattern.cpp
     src/train/weight_matrix-train.cpp
     src/recall/weight_matrix-recall.cpp
+    src/recall/neural_network.cpp
 
 )
 add_test(NAME EccoITest COMMAND test.out)

@@ -1,44 +1,105 @@
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "doctest.h"
+
+#include "common/weight_matrix.hpp"
+#include "recall/neural_network.hpp"
 #include "train/pattern.hpp"
-#include <algorithm>
+
 #include <array>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest.h"
-#include "common/input.hpp"
-#include "common/weight_matrix.hpp"
 
 using namespace hpn;
-/* TEST_CASE("Testing loadVector")
-{
-  std::vector<float> expectedNumbers{1.9f, 2.4f, 5.4f, 6.0f, 0.9f};
-  std::vector<float> effectivedNumbers{hpn::loadVector<float>("vectorTest.txt")};
-  CHECK(expectedNumbers == effectivedNumbers);
-} */
 
-TEST_CASE("Testing WeightMatrix")
+TEST_CASE("Pattern class tests")
 {
-  std::array<std::array<float, 4>, 4> expectedMatrix{
-      std::array<float, 4>{0, -0.5, -0.5, 0.5}, std::array<float, 4>{-0.5, 0, 0.5, -0.5},
-      std::array<float, 4>{-0.5, 0.5, 0, -0.5}, std::array<float, 4>{0.5, -0.5, -0.5, 0}};
-
   Pattern::setSize(4);
-  Pattern pat1{std::vector<int>{-1, 1, 1, -1}};
-  Pattern pat2{std::vector<int>{1, -1, -1, 1}};
-  WeightMatrix effectivedMatrix{4};
-  CHECK(effectivedMatrix.effectiveSize() == 6);
 
-  effectivedMatrix.hebbRule(pat1);
-  effectivedMatrix.hebbRule(pat2);
-  for (size_t i{0}; i != 4; ++i) {
-    for (size_t j{0}; j != 4; ++j) {
-      CHECK(effectivedMatrix[i, j] == expectedMatrix[i][j]);
+  CHECK_NOTHROW(Pattern("1          1         -1  \n-1"));
+
+  CHECK_THROWS_AS(Pattern::setSize(6), std::runtime_error);
+  CHECK_THROWS_AS(Pattern("1 1 1"), std::invalid_argument);
+
+  CHECK_THROWS_AS(Pattern("1 2 3 4"), std::invalid_argument);
+  CHECK_THROWS_AS(Pattern("avcsg"), std::invalid_argument);
+
+  Pattern pattern{"-1 1 1 -1"};
+  std::vector<int> expectedValues{-1, 1, 1, -1};
+  CHECK(pattern.getPixelsValue() == expectedValues);
+}
+
+TEST_CASE("NeuralNetwork class tests")
+{
+  NeuralNetwork::setSize(4);
+
+  CHECK_NOTHROW(NeuralNetwork({1, -1, 1, -1}));
+
+  CHECK_THROWS_AS(NeuralNetwork::setSize(6), std::runtime_error);
+  CHECK_THROWS_AS(NeuralNetwork({1, 1, 1, 1, 1}), std::invalid_argument);
+
+  CHECK_THROWS_AS(NeuralNetwork({1, 2, 3, 4}), std::invalid_argument);
+}
+
+TEST_CASE("WeightMatrix class tests")
+{
+  constexpr size_t matrixSize{4};
+  WeightMatrix weights(matrixSize);
+
+  SUBCASE("WeightMatrix: correct effective size")
+  {
+    CHECK(weights.effectiveSize() == 6);
+  }
+
+  SUBCASE("WeightMatrix: Hebb rule computation")
+  {
+    Pattern pattern1{"-1 1 1 -1"};
+    Pattern pattern2{"1 -1 -1 1"};
+
+    weights.hebbRule(pattern1);
+    weights.hebbRule(pattern2);
+
+    std::array<std::array<double, matrixSize>, matrixSize> expectedWeights{
+        std::array<double, 4>{0, -0.5, -0.5, 0.5},
+        std::array<double, 4>{-0.5, 0, 0.5, -0.5},
+        std::array<double, 4>{-0.5, 0.5, 0, -0.5},
+        std::array<double, 4>{0.5, -0.5, -0.5, 0}};
+
+    for (size_t i = 0; i != matrixSize; ++i) {
+      for (size_t j = 0; j != matrixSize; ++j) {
+        CHECK(weights[i, j] == doctest::Approx(expectedWeights[i][j]));
+      }
     }
   }
-  SUBCASE("bho")
+
+  SUBCASE("WeightMatrix: invalid construction and access")
   {
     CHECK_THROWS_AS(WeightMatrix(3, {1, 1}), std::invalid_argument);
-    CHECK_THROWS_AS(effectivedMatrix.operator[](0,4), std::invalid_argument);
+    CHECK_THROWS_AS(weights.operator[](0, 4), std::invalid_argument);
+  }
+}
+
+TEST_CASE("NeuralNetwork energy minimization and state update")
+{
+  constexpr size_t matrixSize = 4;
+  Pattern pattern1{"-1 1 1 -1"};
+  Pattern pattern2{"1 -1 -1 1"};
+  WeightMatrix weights(matrixSize);
+  weights.hebbRule(pattern1);
+  weights.hebbRule(pattern2);
+
+  NeuralNetwork network({1, -1, 1, -1});
+
+  SUBCASE("Energy computation")
+  {
+    double expectedEnergy = 1.0f;
+    CHECK(doctest::Approx(network.getEnergy(weights)) == expectedEnergy);
+  }
+
+  SUBCASE("Energy minimization and convergence")
+  {
+    network.minimizeState(weights, false);
+    std::vector<int> expectedState{-1, 1, 1, -1};
+    CHECK(network.getNeuronsValue() == expectedState);
   }
 }
