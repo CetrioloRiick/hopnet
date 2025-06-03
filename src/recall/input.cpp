@@ -51,9 +51,9 @@ RecallOptions getRecallOpt(int argc, char* argv[])
       "o,output", "Output file path",
       cxxopts::value<std::string>()->default_value("corrected-pattern.txt"))(
       "W,width", "Width (in pixels) of the input pattern",
-      cxxopts::value<int>()->default_value("100"))(
+      cxxopts::value<int>()->default_value("50"))(
       "H,height", "Height (in pixels) of the input pattern",
-      cxxopts::value<int>()->default_value("100"))(
+      cxxopts::value<int>()->default_value("50"))(
       "m,monitor-process", "Enable monitoring of energy minimization during recall",
       cxxopts::value<bool>()->default_value("true"))(
       "n,noise-probability",

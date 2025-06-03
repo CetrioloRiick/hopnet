@@ -35,11 +35,11 @@ BinarizeOptions getBinOpt(int argc, char* argv[])
 
   options.add_options()("i,input", "Input folder path", cxxopts::value<std::string>())(
       "o,output", "Output file path",
-      cxxopts::value<std::string>()->default_value("binarized-image.txt"))(
+      cxxopts::value<std::string>()->default_value("binarized-images.txt"))(
       "W,width", "Width to resize each image to before binarization",
-      cxxopts::value<int>()->default_value("100"))(
+      cxxopts::value<int>()->default_value("50"))(
       "H,height", "Height to resize each image to before binarization",
-      cxxopts::value<int>()->default_value("100"))(
+      cxxopts::value<int>()->default_value("50"))(
       "t,threshold", "Threshold for binarization (0-255)",
       cxxopts::value<int>()->default_value("127"))(
       "s,show", "Save each binarized image during processing",

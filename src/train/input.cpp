@@ -23,7 +23,7 @@ TrainOptions getTrainOpt(int argc, char* argv[])
       "i,input", "Input file path",
       cxxopts::value<std::string>()->default_value("binarized-images.txt"))(
       "p,pattern-size", "Size of the pattern (width * height)",
-      cxxopts::value<size_t>()->default_value("10000"))(
+      cxxopts::value<size_t>()->default_value("2500"))(
       "o,output", "Output file path for weight matrix",
       cxxopts::value<std::string>()->default_value("hopfield-weights.txt"))("h,help",
                                                                             "Print help");

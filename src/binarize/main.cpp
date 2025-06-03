@@ -23,15 +23,12 @@ int main(int argc, char* argv[])
         [&](const auto& entry) {
           if (hpn::isAcceptedImage(entry)) {
             cv::Mat image = cv::imread(entry.path(), cv::IMREAD_GRAYSCALE);
-            
+
             cv::resize(image, image, cv::Size(options.width, options.height));
             cv::threshold(image, image, options.threshold, 255, cv::THRESH_BINARY);
 
             if (options.show) {
-              cv::imwrite(options.inputFolder.parent_path()
-                              / ("binarized-" + entry.path().filename().string()),
-                          image);
-                          //QUA DA AGGIUSTARE
+              cv::imwrite(("binarized-" + entry.path().filename().string()), image);
             }
 
             // Not usable because image is not necessarily contiguous in memory

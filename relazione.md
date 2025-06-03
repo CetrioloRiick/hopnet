@@ -99,7 +99,7 @@ Esempio di esecuzione base:
 ./binarize.out -i path/to/images/directory
 ```
 
-Dove va indicata la cartella contenente le immagini che si vogliono binarizzare
+dove va indicata la cartella contenente le immagini che si vogliono binarizzare
 
 Opzioni disponibili:
 
@@ -110,8 +110,8 @@ Usage:
 
   -i, --input arg      Input folder path (obbligatorio)
   -o, --output arg     Output file path (default: binarized-images.txt)
-  -W, --width arg      Width to resize each image (default: 100)
-  -H, --height arg     Height to resize each image (default: 100)
+  -W, --width arg      Width to resize each image (default: 50)
+  -H, --height arg     Height to resize each image (default: 50)
   -t, --threshold arg  Threshold for binarization (0-255) (default: 127)
   -s, --show           Save each binarized image during processing
       --help           Print help
@@ -143,7 +143,7 @@ Usage:
   train [OPTION...]
 
   -i, --input arg         Input file path (default: binarized-images.txt)
-  -p, --pattern-size arg  Size of the pattern (width * height) (default: 10000)
+  -p, --pattern-size arg  Size of the pattern (width * height) (default: 2500)
   -o, --output arg        Output file path for weight matrix (default: hopfield-weights.txt)
   -h, --help              Print help
 ```
@@ -155,7 +155,7 @@ Usage:
 Esempio di esecuzione con inserimento di rumore:
 
 ```bash
-./recall.out -n 0.1
+./recall.out -n 0.07
 ```
 
 Opzioni disponibili:
@@ -168,8 +168,8 @@ Usage:
   -w, --weights arg            Path to the weight matrix file (default: hopfield-weights.txt)
   -i, --input arg              Corrupted input pattern file (default: pattern.txt)
   -o, --output arg             Output file path (default: corrected-pattern.txt)
-  -W, --width arg              Width (pixels) of the input pattern (default: 100)
-  -H, --height arg             Height (pixels) of the input pattern (default: 100)
+  -W, --width arg              Width (pixels) of the input pattern (default: 50)
+  -H, --height arg             Height (pixels) of the input pattern (default: 50)
   -m, --monitor-process        Enable monitoring of energy minimization during recall (default: true)
   -n, --noise-probability arg  Probability of introducing noise into the input (0 to 1) (default: 0)
   -h, --help                   Print help
@@ -185,7 +185,7 @@ Per la verifica del funzionamento sono stati implementati alcuni test automatici
 I test sono principalmente di tipo unitario e si concentrano su:
 
 * **Pattern**: verifica della coerenza di dimensione, corretta validazione dei valori ammessi (+1/-1), gestione di errori in caso di dimensioni incompatibili.
-* **WeightMatrix**: validazione della logica di memorizzazione compressa (triangolo superiore), corretto accesso simmetrico tramite l’overload di `operator[]`, coerenza della regola di Hebb.
+* **WeightMatrix**: corretto accesso simmetrico tramite l’overload di `operator[]`, coerenza della regola di Hebb.
 * **NeuralNetwork**: verifica della convergenza degli stati, corretto calcolo dell’energia.
 
 Inoltre sono stati eseguiti test funzionali sull’intero flusso binarizzazione → training → recall, utilizzando immagini note e verificando la capacità del sistema di ricostruire pattern correttamente anche in presenza di rumore.
