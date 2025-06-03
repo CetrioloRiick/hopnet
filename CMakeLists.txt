@@ -42,8 +42,6 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 #target_include_directories(binarize PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 
-# dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
-# sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
 # Executable: binarize.out
 add_executable(binarize.out
     src/binarize/main.cpp
@@ -51,11 +49,6 @@ add_executable(binarize.out
     src/binarize/input.cpp
 )
 
-#add_compile_options(-Wno-deprecated-enum-enum-conversion)
-
-
-# nel caso si usi SFML. analogamente per eventuali altre librerie
-target_include_directories(binarize.out PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(binarize.out PRIVATE ${OpenCV_LIBS})
 
 # Executable: train.out
@@ -77,24 +70,25 @@ add_executable(recall.out
     src/recall/neural_network.cpp
 )
 
-add_executable(test.out
-    tests/test.cpp
-    src/common/weight_matrix.cpp
-    src/train/pattern.cpp
-    src/train/weight_matrix-train.cpp
-    src/recall/weight_matrix-recall.cpp
-    src/recall/neural_network.cpp
-)
 
-add_test(NAME EccoITest COMMAND test.out)
 target_link_libraries(recall.out PRIVATE sfml-graphics)
+
+
 # il testing e' abilitato di default
 # per disabilitarlo, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
-#if (BUILD_TESTING)
+if (BUILD_TESTING)
 
   # aggiungi l'eseguibile progetto.t
- # add_executable(progetto.t file.t.cpp)
+  add_executable(test.out
+      tests/test.cpp
+      src/common/weight_matrix.cpp
+      src/train/pattern.cpp
+      src/train/weight_matrix-train.cpp
+      src/recall/weight_matrix-recall.cpp
+      src/recall/neural_network.cpp
+  )
   # aggiungi l'eseguibile progetto.t alla lista dei test
- # add_test(NAME progetto.t COMMAND progetto.t)
+  add_test(NAME tests COMMAND test.out)
 
+endif()
 #endif()
