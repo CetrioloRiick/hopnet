@@ -1,14 +1,12 @@
 # HopNet
 
 Repository GitHub: [HopNet - GitHub](https://github.com/CetrioloRiick/hopnet)
+
 Autore: *Diego Quarantani*
+
+Progetto: *Rete neurale di Hopfield*
+
 Data: *2 Giugno 2025*
-
-
-## Descrizione generale del progetto
-
-Il progetto implementa un semplice simulatore di rete neurale di tipo Hopfield, suddividendo il lavoro in tre fasi distinte: binarizzazione dei dati di input, addestramento della rete tramite la regola di Hebb, e richiamo (recall) dei pattern appresi.
-Il codice è suddiviso in moduli separati, compilati e gestiti tramite CMake, con l’obiettivo di mantenere una struttura modulare, riusabile ed estensibile.
 
 
 ## Struttura del progetto
@@ -21,7 +19,7 @@ Il progetto è stato suddiviso in tre eseguibili distinti:
 
 Tutti i programmi condividono parte del codice tramite una struttura a directory comune:
 
-```shell
+```bash
 .
 |-- include
 |   |-- binarize
@@ -78,13 +76,13 @@ Questa suddivisione consente al CMake di compilare solo le parti effettivamente 
 
 Per compilare ed eseguire correttamente il progetto sono necessarie le seguenti librerie:
 
-```shell
+```bash
 libcxxopts-dev libopencv-dev libsfml-dev
 ```
 
 Per installare tutte le dipendenze (compilatore incluso) è sufficiente eseguire:
 
-```shell
+```bash
 sudo apt install g++ cmake ninja-build libcxxopts-dev libopencv-dev libsfml-dev
 ```
 
@@ -97,19 +95,21 @@ Tutti i programmi supportano l’opzione `--help` che stampa l’elenco completo
 
 Esempio di esecuzione base:
 
-```shell
+```bash
 ./binarize.out -i path/to/images/directory
 ```
 
+Dove va indicata la cartella contenente le immagini che si vogliono binarizzare
+
 Opzioni disponibili:
 
-```shell
+```bash
 Convert all images in a folder to binary format (-1, +1)
 Usage:
   binarize [OPTION...]
 
   -i, --input arg      Input folder path (obbligatorio)
-  -o, --output arg     Output file path (default: binarized-image.txt)
+  -o, --output arg     Output file path (default: binarized-images.txt)
   -W, --width arg      Width to resize each image (default: 100)
   -H, --height arg     Height to resize each image (default: 100)
   -t, --threshold arg  Threshold for binarization (0-255) (default: 127)
@@ -119,23 +119,25 @@ Usage:
 
 Se il risultato della binarizzazione non fosse soddisfacente, si consiglia di modificare il parametro `--threshold`.
 
-Per generare un singolo pattern binario:
+Per generare un singolo pattern binario, necessario a recall come pattern corrotto da *aggiustare*, eseguire il comando seguente indicando una cartella che contiene solo un'immagine:
 
-```shell
+```bash
 ./binarize.out -i path/to/image/directory -o pattern.txt
 ```
+
+oppure copiare dentro pattern.txt un pattern a qualsiasi tra quelli presenti in binarized-images.txt.
 
 ### Train
 
 Esecuzione di default:
 
-```shell
+```bash
 ./train.out
 ```
 
 Opzioni disponibili:
 
-```shell
+```bash
 Train a Hopfield neural network from binary image patterns and save the weight matrix.
 Usage:
   train [OPTION...]
@@ -152,13 +154,13 @@ Usage:
 
 Esempio di esecuzione con inserimento di rumore:
 
-```shell
+```bash
 ./recall.out -n 0.1
 ```
 
 Opzioni disponibili:
 
-```shell
+```bash
 Run the recall phase of a Hopfield neural network: load weights, correct a corrupted pattern, and observe convergence.
 Usage:
   recall [OPTION...]
@@ -184,12 +186,12 @@ I test sono principalmente di tipo unitario e si concentrano su:
 
 * **Pattern**: verifica della coerenza di dimensione, corretta validazione dei valori ammessi (+1/-1), gestione di errori in caso di dimensioni incompatibili.
 * **WeightMatrix**: validazione della logica di memorizzazione compressa (triangolo superiore), corretto accesso simmetrico tramite l’overload di `operator[]`, coerenza della regola di Hebb.
-* **NeuralNetwork**: verifica della convergenza degli stati, coerenza del criterio di arresto (assenza di oscillazioni), corretto calcolo dell’energia.
+* **NeuralNetwork**: verifica della convergenza degli stati, corretto calcolo dell’energia.
 
 Inoltre sono stati eseguiti test funzionali sull’intero flusso binarizzazione → training → recall, utilizzando immagini note e verificando la capacità del sistema di ricostruire pattern correttamente anche in presenza di rumore.
 
 
 ## Interpretazione dei risultati
 
-Il sistema si è dimostrato in grado di apprendere correttamente un numero limitato di pattern, ricostruendoli anche in presenza di rumore moderato (fino al 10-15%).
-L’introduzione di un numero eccessivo di pattern o di rumore eccessivo porta, come atteso teoricamente, a fenomeni di instabilità o attrattori spuri.
+Il sistema si è dimostrato in grado di apprendere correttamente un numero limitato di pattern, ricostruendoli anche in presenza di rumore moderato.
+L’introduzione di un numero eccessivo di pattern o di rumore eccessivo porta, come atteso teoricamente, a fenomeni di instabilità o stati spuri.

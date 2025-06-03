@@ -70,6 +70,16 @@ TEST_CASE("WeightMatrix class tests")
         CHECK(weights[i, j] == doctest::Approx(expectedWeights[i][j]));
       }
     }
+
+    SUBCASE("WeightMatrix: correct access to values")
+    {
+      WeightMatrix test{5, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}};
+      CHECK(test[2, 2] == 0);
+      CHECK(test[3, 4] == 9);
+      CHECK(test[4, 3] == 9);
+      CHECK(test[0, 3] == 2);
+      CHECK(test[3, 0] == 2);
+    }
   }
 
   SUBCASE("WeightMatrix: invalid construction and access")
